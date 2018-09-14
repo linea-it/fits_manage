@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  # Database
+  # database:
+  #   image: postgres:9.6
+  #   restart: always
+  #   env_file:
+  #     - .env
+  #   expose:
+  #     - 5432
+  #   volumes:
+  #     - ./pg_data:/var/lib/postgresql/data
+  #     - ./pg_backups:/pg_backups
+  #     - ./database_subset:/data
+  #   networks:
+  #     - fits_manage      
+
+  #Backend Django
+  backend:
+    build: ./backend
+    image: fits_manage_backend
+    env_file:
+      - .env    
+    volumes:
+      - ./backend:/app
+      - ./log:/log
+      - ./archive:/archive      
+    ports:
+      - 8081:8081
+    # depends_on:
+    #   - database
+    # networks:
+    #   - fits_manage            
+
+networks:
+  fits_manage:
