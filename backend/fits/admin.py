@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+
+from .models import Header
+@admin.register(Header)
+class HeaderAdmin(admin.ModelAdmin):
+    list_display = ('id', 'filename', )
+    search_fields = ()
