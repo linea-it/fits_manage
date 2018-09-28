@@ -59,3 +59,29 @@ docker-compose up -d
 ## Access Backend
 Open in Browser
 http://localhost:8081
+
+## Acessar o Admin
+Open in Browser
+http://localhost:8081/admin/
+
+## Adicionar mais campos ao models.py
+
+Descobrir o nome do container usando o comando 
+
+```
+docker ps
+```
+
+Alterar o arquivo backend/fits/models.py adicionando novos campos 
+seguindo os tipos de campos documentados neste link 
+https://docs.djangoproject.com/pt-br/2.1/ref/models/fields/
+
+Depois de criar os novos campos, com o container ligado executar o comandos:
+```
+docker exec -it fitsmanage_backend_1 python manage.py makemigrations
+```
+
+```
+docker exec -it fitsmanage_backend_1 python manage.py migrate
+```
+
