@@ -5,7 +5,7 @@ prototype for LSST survey progress
 ## Instalation
 ### Clone Repository
 ```
-https://github.com/linea-it/fits_manage.git fits_manage
+https://github.com/linea-it/fits_manage.git lna
 ```
 
 ```
