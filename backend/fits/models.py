@@ -10,6 +10,18 @@ class Exposure(models.Model):
         blank=True
     )
 
+    ra_deg = models.FloatField(
+        verbose_name='RA (deg)',
+        null=True, 
+        blank=True
+    )
+
+    dec_deg = models.FloatField(
+        verbose_name='Dec (deg)',
+        null=True, 
+        blank=True
+    )
+
     file_path = models.CharField(
         max_length=256,
         verbose_name='File Path',

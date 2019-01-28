@@ -26,24 +26,45 @@ class Command(BaseCommand):
     def delete(self):
 
         self.stdout.write("Removing records")
-
+        count = Exposure.objects.count()
         # Para cada registro no Model Exposure, executar o comando delete
         for x in Exposure.objects.all().iterator():
             x.delete()
 
-        self.stdout.write("Removed %s records" % Exposure.objects.count())
+        self.stdout.write("Removed %s records" % count)
+        
+
+    def convert_ra_sex_to_deg(self, ra):
+
+        H, M, S = [float(i) for i in ra.split(':')]
+
+        result = (H + M/60. + S/3600.)*15.
+
+        return float(result)
+
+    def convert_dec_sex_to_deg(self, dec):
+        ds = 1
+
+        D, M, S = [float(i) for i in dec.split(':')]
+        if str(D)[0] == '-':
+            ds, D = -1, abs(D)
+
+        result = ds*(D + M/60. + S/3600.)
+
+        return float(result)
 
     def create_record(self, row):
         self.stdout.write("Creating record for the file: %s" % row.filename)
 
-        self.stdout.write("Row File_size: %s" % row.file_size)
-        # int(row.file_size)
+        # self.stdout.write("Row File_size: %s" % row.file_size)
 
         try:
             exposure = Exposure()
             exposure.filename = row.filename
             exposure.file_path = row.path
             exposure.file_size = row.file_size
+            exposure.ra_deg = self.convert_ra_sex_to_deg(row.ra)
+            exposure.dec_deg = self.convert_dec_sex_to_deg(row.dec)
             exposure.save()
 
             header = Header()
@@ -92,7 +113,8 @@ class Command(BaseCommand):
         data = pd.read_csv(
             file_path,
             delimiter=';',
-            names=['filename', 'path', 'date', 'object', 'exposure', 'date_obs', 'ra', 'dec', 'telescop', 'instrume', 'observer', 'filter', 'file_size', ],
+            names=['filename', 'path', 'date', 'object', 'exposure', 'date_obs', 'ra',
+                   'dec', 'telescop', 'instrume', 'observer', 'filter', 'file_size', ],
             dtype={"file_size": int},
             skiprows=1)
 
