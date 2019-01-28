@@ -12,3 +12,5 @@ coveralls
 pep8
 pyflakes
 pytest
+pandas
+graphene_django

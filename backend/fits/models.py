@@ -34,6 +34,7 @@ class Header(models.Model):
 
     archive = models.ForeignKey(
         Exposure, 
+        related_name='headers',
         on_delete=models.CASCADE
     )
 

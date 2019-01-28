@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'fits'
+    'graphene_django',
+    'fits',
+
 ]
 
 MIDDLEWARE = [
@@ -82,9 +84,9 @@ WSGI_APPLICATION = 'api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ['DB_NAME'],
-        'USER': os.environ['DB_USER'],
-        'PASSWORD': os.environ['DB_PASS'],
+        'NAME': os.environ['POSTGRES_DB'],
+        'USER': os.environ['POSTGRES_USER'],
+        'PASSWORD': os.environ['POSTGRES_PASSWORD'],
         'HOST': os.environ['DB_HOST'],
         'PORT': os.environ['DB_PORT'],
     },
@@ -121,7 +123,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -142,3 +144,8 @@ MEDIA_URL = '/media/'
 
 ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Graphene Settigns : https://docs.graphene-python.org/projects/django/en/latest/tutorial-plain/
+GRAPHENE = {
+    'SCHEMA': 'api.schema.schema'
+}

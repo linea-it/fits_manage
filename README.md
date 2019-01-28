@@ -9,7 +9,11 @@ https://github.com/linea-it/lna.git lna
 ```
 
 ```
-cd fits_manage/
+cd lna
+```
+### Docker-Compose
+```
+ln -s docker-compose-development.yml docker-compose.yml
 ```
 
 ### Create a .env based in env_template
@@ -18,36 +22,26 @@ cp env_template .env
 
 ```
 
+### Arquivo de Conf do NGNIX
+```
+cd nginx/ && ln -s development.conf default.conf && cd ..
+```
+
+
 ### Build and Run Containers 
 ```
 docker-compose build
 ```
-
-### Prepare Database
-
 ```
-docker-compose up database
+docker-compose up 
 ```
-
-```
-docker exec -it fits_manage_database_1 psql -h localhost -U postgres
-```
-
-Dentro do psql executar a query.
-```
-ALTER USER postgres WITH PASSWORD 'postgres';
-```
-
-Stop database container and up core-admin
 
 ### Create a superuser in Django
-```
-docker-compose up core-admin
-```
+
 run createsuperuser to create a admin user in Django.
 with the docker running open a new terminal and run this command.
 ```
- docker exec -it fits_manage_backend_1 python manage.py createsuperuser
+docker exec -it $(docker ps -q -f name=backend) python manage.py createsuperuser
 ```
 
 ### Run 
@@ -58,11 +52,13 @@ docker-compose up -d
 
 ## Access Backend
 Open in Browser
-http://localhost:8081
+http://localhost
 
 ## Acessar o Admin
 Open in Browser
-http://localhost:8081/admin/
+http://localhost/admin/
+
+
 
 ## Adicionar mais campos ao models.py
 
