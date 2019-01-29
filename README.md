@@ -35,6 +35,7 @@ docker-compose build
 ```
 docker-compose up 
 ```
+In First time backend can't connect to database to apply migrations, if this occur stop all container and run up again.
 
 ### Create a superuser in Django
 

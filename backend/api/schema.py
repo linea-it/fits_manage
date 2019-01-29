@@ -1,11 +1,13 @@
-import fits.schema
-
 import graphene
 
 from graphene_django.debug import DjangoDebug
+
+import lna.schema
+
+
 class Query(
-    fits.schema.Query,
-    graphene.ObjectType):
+        lna.schema.Query,
+        graphene.ObjectType):
 
     debug = graphene.Field(DjangoDebug, name='__debug')
 

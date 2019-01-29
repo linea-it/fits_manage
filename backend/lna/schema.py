@@ -3,7 +3,7 @@ import graphene
 
 from graphene_django.types import DjangoObjectType
 
-from fits.models import Exposure, Header
+from lna.models import Exposure, Header
 
 class ExposureType(DjangoObjectType):
     class Meta:

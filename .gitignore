@@ -6,3 +6,9 @@ log
 
 # Archive
 archive
+
+# Docker Compose
+docker-compose.yml
+
+# Ngnix config
+nginx/default.conf

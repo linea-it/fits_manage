@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 import os
 import csv
-from fits.models import Exposure, Header
+from lna.models import Exposure, Header
 
 import pandas as pd
 
@@ -32,7 +32,6 @@ class Command(BaseCommand):
             x.delete()
 
         self.stdout.write("Removed %s records" % count)
-        
 
     def convert_ra_sex_to_deg(self, ra):
 
@@ -56,8 +55,6 @@ class Command(BaseCommand):
     def create_record(self, row):
         self.stdout.write("Creating record for the file: %s" % row.filename)
 
-        # self.stdout.write("Row File_size: %s" % row.file_size)
-
         try:
             exposure = Exposure()
             exposure.filename = row.filename
@@ -67,15 +64,15 @@ class Command(BaseCommand):
             exposure.dec_deg = self.convert_dec_sex_to_deg(row.dec)
             exposure.save()
 
-            header = Header()
-            header.archive = exposure
-            # TODO: Formata a string data para um objeto datetime do python
-            header.date = row.date
-            header.dateobs = row.date_obs
-            header.ra = row.ra
-            header.dec = row.dec
+            # header = Header()
+            # header.archive = exposure
+            # # TODO: Formata a string data para um objeto datetime do python
+            # header.date = row.date
+            # header.dateobs = row.date_obs
+            # header.ra = row.ra
+            # header.dec = row.dec
 
-            header.save()
+            # header.save()
             # TODO: Criar Campos para coordenda RA e Dec em graus.
 
         except Exception as e:

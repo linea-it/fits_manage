@@ -1,14 +1,13 @@
 from django.contrib import admin
 
-
-from .models import Header, Exposure
+from lna.models import Header, Exposure
 
 @admin.register(Exposure)
 class ExposureAdmin(admin.ModelAdmin):
     list_display = ('id', 'filename', 'file_path', 'file_size')
-    search_fields = ()
+    search_fields = ('filename',)
 
 @admin.register(Header)
 class HeaderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'archive', 'ra', 'dec')
-    search_fields = ()
+    list_display = ('id', 'archive', 'name', 'value')
+    # search_fields = ()
