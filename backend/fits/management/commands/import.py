@@ -32,7 +32,6 @@ class Command(BaseCommand):
             x.delete()
 
         self.stdout.write("Removed %s records" % count)
-        
 
     def convert_ra_sex_to_deg(self, ra):
 
