@@ -53,29 +53,35 @@ class Command(BaseCommand):
         return float(result)
 
     def create_record(self, row):
-        self.stdout.write("Creating record for the file: %s" % row.filename)
-
         try:
-            exposure = Exposure()
-            exposure.filename = row.filename
-            exposure.file_path = row.path
-            exposure.file_size = row.file_size
-            exposure.ra_deg = self.convert_ra_sex_to_deg(row.ra)
-            exposure.dec_deg = self.convert_dec_sex_to_deg(row.dec)
-            exposure.save()
 
-            # header = Header()
-            # header.archive = exposure
-            # # TODO: Formata a string data para um objeto datetime do python
-            # header.date = row.date
-            # header.dateobs = row.date_obs
-            # header.ra = row.ra
-            # header.dec = row.dec
+            exposure, created = Exposure.objects.update_or_create(
+                filename=row.filename,
+                file_path=os.path.join(row.path, row.filename),
+                defaults={
+                    'date': row.date,
+                    'date_obs': row.date_obs,
+                    'target': row.object,
+                    'ra_deg': self.convert_ra_sex_to_deg(row.ra),
+                    'dec_deg': self.convert_dec_sex_to_deg(row.dec),
+                    'ra': row.ra,
+                    'dec': row.dec,
+                    'band': row.filter,
+                    'exposure_time': float(row.exposure.replace(',', '.')),
+                    'telescope': row.telescope,
+                    'instrument': row.instrument,
+                    'observer': row.observer,
+                    'file_type': os.path.splitext(row.filename)[1],
+                    'file_size': row.file_size,
+                })
 
-            # header.save()
-            # TODO: Criar Campos para coordenda RA e Dec em graus.
+            if created:
+                self.stdout.write("Created: [ %s ] ID [ %s ]" % (row.filename, exposure.id))
+            else:
+                self.stdout.write("Updated: [ %s ] ID [ %s ]" % (row.filename, exposure.id))
 
         except Exception as e:
+            self.stdout.write("FAILED: [ %s ] Error [ %s ]" % (row.filename, e))
             raise(e)
 
     def handle(self, *args, **options):
@@ -99,20 +105,15 @@ class Command(BaseCommand):
         if not os.path.exists(file_path):
             self.stdout.write("Arquivo nao encontrado")
 
-        # # fieldnames = ['filename','path','simple','bitpix','naxis','naxis1','naxis2','extend','origin','date','iraf-tlm','object','comment','acqmode','readmode','imgrect','hbin','vbin','subrect','xtype','trigger','calib','dllver','exposure','temp','readtime','operatn','gain','emrealgn','vshift','preamp','serno','unsttemp','dtnwlgth','sntvty','frame','eshtmode','detector','exptime','outptamp','camgain','date-obs','ra','dec','epoch','airmass','jd','st','ha','image','telescop','platescl','instrume','observer','rdnoise','filter','focusval','w-bar','w-temp','w-hum','file_size']
-        # fieldnames = ['filename', 'path', 'date', 'object', 'exposure', 'date-obs', 'ra', 'dec', 'telescop', 'instrume', 'observer', 'filter', 'file_size', ]
-
-        # with open(file_path) as csvfile:
-        #     reader = csv.DictReader(csvfile, fieldnames=fieldnames, delimiter=';')
-        #     for row in reader:
-        #         self.create_record(row)
-
         data = pd.read_csv(
             file_path,
             delimiter=';',
             names=['filename', 'path', 'date', 'object', 'exposure', 'date_obs', 'ra',
-                   'dec', 'telescop', 'instrume', 'observer', 'filter', 'file_size', ],
-            dtype={"file_size": int},
+                   'dec', 'telescope', 'instrument', 'observer', 'filter', 'file_size', ],
+            parse_dates=['date', 'date_obs'],
+            dtype={
+                "file_size": int
+            },
             skiprows=1)
 
         for row in data.itertuples():

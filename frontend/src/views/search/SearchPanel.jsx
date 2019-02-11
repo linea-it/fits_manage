@@ -16,19 +16,14 @@ class SearchPanel extends Component {
     return (
       <div>
         <Grid container spacing={24}>
-          <Grid item xs={12} sm={6} lg={6}>
-            <Card>
-              <CardContent>
-                <FilterPanel />
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} lg={6}>
-            <Card>
-              <CardContent>
-                Produtos mais vendidos
-              </CardContent>
-            </Card>
+          <Grid item xs={12} sm={12} lg={12}>
+            <Grid item xs={6} sm={6} lg={6}>
+              <Card>
+                <CardContent>
+                  <FilterPanel />
+                </CardContent>
+              </Card>            
+            </Grid>
           </Grid>
           <Grid item xs={12} sm={12} lg={12}>
           <Card>

@@ -16,13 +16,17 @@ class ResultGrid extends Component {
     get initialState() {
         return {
             columns: [
+                { name: 'filename', title: 'Filename' },
+                { name: 'target', title: 'Target' },
                 { name: 'ra_deg', title: 'RA (deg)' },
                 { name: 'dec_deg', title: 'Dec (deg)' },
                 { name: 'date_obs', title: 'Date Obs' },
-                { name: 'target', title: 'Target' },
-                { name: 'exptime', title: 'Exptime' },
-                { name: 'filter', title: 'Filter' },
-                { name: 'filename', title: 'Filename' },
+                { name: 'band', title: 'Filter' },
+                { name: 'exposure_time', title: 'Exptime' },
+                { name: 'telescope', title: 'Telescope' },
+                { name: 'instrument', title: 'Instrument' },
+                { name: 'observer', title: 'Oberver' },
+                { name: 'file_size', title: 'Size' },
             ],
             rows: [],
             totalCount: 0,

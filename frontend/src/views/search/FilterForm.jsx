@@ -11,7 +11,7 @@ export const FilterForm = (props) => {
        label="Name"
        fullWidth
      />
-     <TextField
+     {/* <TextField
        id="email"
        name="email"
        label="Email"
@@ -38,7 +38,7 @@ export const FilterForm = (props) => {
        color="primary"
      >
        Submit
-     </Button>
+     </Button> */}
    </form>
  );
 };
