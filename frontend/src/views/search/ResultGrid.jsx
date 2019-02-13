@@ -1,159 +1,106 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
-    Grid, Table, TableHeaderRow, PagingPanel, ColumnChooser,
-    TableColumnVisibility, Toolbar,
+  Grid, Table, TableHeaderRow, ColumnChooser,
+  TableColumnVisibility, Toolbar, TableColumnResizing,
 } from '@devexpress/dx-react-grid-material-ui';
-import { PagingState, SortingState, CustomPaging } from '@devexpress/dx-react-grid';
+import {
+  SortingState, IntegratedSorting,
+  DataTypeProvider,
+} from '@devexpress/dx-react-grid';
+import moment from 'moment';
+import filesize from 'filesize';
+
+const DateFormatter = ({ value }) => `${moment(value).locale('en').format("L LTS")}`;
+
+const DateTypeProvider = props => (
+  <DataTypeProvider
+    formatterComponent={DateFormatter}
+    {...props}
+  />
+);
+
+const SizeFormatter = ({ value }) => `${filesize(value)}`;
+
+const SizeTypeProvider = props => (
+  <DataTypeProvider
+    formatterComponent={SizeFormatter}
+    {...props}
+  />
+);
 
 
 const styles = theme => ({})
 
 class ResultGrid extends Component {
 
-    state = this.initialState;
+  state = this.initialState;
 
-    get initialState() {
-        return {
-            columns: [
-                { name: 'filename', title: 'Filename' },
-                { name: 'target', title: 'Target' },
-                { name: 'ra_deg', title: 'RA (deg)' },
-                { name: 'dec_deg', title: 'Dec (deg)' },
-                { name: 'date_obs', title: 'Date Obs' },
-                { name: 'band', title: 'Filter' },
-                { name: 'exposure_time', title: 'Exptime' },
-                { name: 'telescope', title: 'Telescope' },
-                { name: 'instrument', title: 'Instrument' },
-                { name: 'observer', title: 'Oberver' },
-                { name: 'file_size', title: 'Size' },
-            ],
-            rows: [],
-            totalCount: 0,
-            pageSize: 15,
-            pageSizes: [15, 25, 50, 100],
-            currentPage: 0,
-            sorting: [{ columnName: 'date_obs', direction: 'asc' }],
-            filters: [],
-            searchValue: '',
-            loading: false
-        }
+  get initialState() {
+    return {
+      columns: [
+        { name: 'filename', title: 'Filename' },
+        { name: 'target', title: 'Target' },
+        { name: 'ra', title: 'RA' },
+        { name: 'dec', title: 'Dec' },
+        { name: 'dateObs', title: 'Date Obs' },
+        { name: 'band', title: 'Filter' },
+        { name: 'exposureTime', title: 'Exptime' },
+        { name: 'telescope', title: 'Telescope' },
+        { name: 'instrument', title: 'Instrument' },
+        { name: 'observer', title: 'Oberver' },
+        { name: 'fileSize', title: 'Size' },
+      ],
+      defaultColumnWidths: [
+        { columnName: 'filename', width: 220 },
+        { columnName: 'target', width: 120 },
+        { columnName: 'ra', width: 80 },
+        { columnName: 'dec', width: 80 },
+        { columnName: 'dateObs', width: 180 },
+        { columnName: 'band', width: 80 },
+        { columnName: 'exposureTime', width: 90 },
+        { columnName: 'telescope', width: 100 },
+        { columnName: 'instrument', width: 100 },
+        { columnName: 'observer', width: 120 },
+        { columnName: 'fileSize', width: 80 },
+      ],
+      sorting: [{ columnName: 'dateObs', direction: 'asc' }],
+      loading: false,
     }
+  }
 
-    componentDidMount() {
-        this.loadData();
-    }
+  render() {
+    // const { classes } = this.props;
+    const { rows } = this.props;
+    const {
+      columns,
+      defaultColumnWidths
+    } = this.state;
 
-    // componentDidUpdate() {
-    //   this.loadData();
-    // }
+    return (
+      <Grid
+        columns={columns}
+        rows={rows}>
 
-    changeSorting = sorting => {
-        this.setState({
-            sorting,
-        }, () => {
-            this.loadData()
-        });
-    }
+        <SortingState />
+        <IntegratedSorting />
 
-    changeCurrentPage = currentPage => {
-        // console.log("changeCurrentPage: ", currentPage)
-        this.setState({
-            currentPage,
-        }, () => {
-            this.loadData()
-        });
-    }
+        <DateTypeProvider
+            for={['dateObs']}
+          />
+        <SizeTypeProvider
+          for={['fileSize']}
+          />
 
-    changePageSize = (pageSize) => {
-        const { totalCount, currentPage: stateCurrentPage } = this.state;
-        const totalPages = Math.ceil(totalCount / pageSize);
-        const currentPage = Math.min(stateCurrentPage, totalPages - 1);
+        <Table />
+        <TableColumnResizing defaultColumnWidths={defaultColumnWidths} />
+        <TableHeaderRow showSortingControls />
+        <TableColumnVisibility />
 
-        this.setState({
-            pageSize,
-            currentPage,
-        }, () => {
-            this.loadData()
-        });
-    }
-
-    loadData = () => {
-        console.log("Load Data")
-
-        // this.setState({ loading: true });
-
-        // let currentPage = this.state.currentPage;
-
-        // this.api.getNfes({
-        //     currentPage: (currentPage + 1),
-        //     pageSize: this.state.pageSize,
-        //     sorting: this.state.sorting,
-        //     searchValue: this.state.searchValue
-        //   }).then(res => {
-
-        //     const r = res.data;
-
-        //     this.setState({
-        //       rows: r.rows,
-        //       totalCount: r.totalCount,
-        //       currentPage: r.currentPage - 1,
-        //       // sizePerPage: sizePerPage,
-        //       loading: false,
-        //       // sortField: sortField,
-        //       // sortOrder: sortOrder,
-        //     });
-        //   });
-
-    }
-
-
-    render() {
-
-        // const { classes } = this.props;
-        const {
-            rows,
-            columns,
-            // currencyColumns,
-            tableColumnExtensions,
-            sorting,
-            pageSize,
-            pageSizes,
-            currentPage,
-            totalCount,
-        } = this.state;
-
-        return (
-            <div>
-                <Grid
-                    columns={columns}
-                    rows={rows}>
-                    <SortingState
-                        sorting={sorting}
-                        onSortingChange={this.changeSorting}
-                    />
-                    <PagingState
-                        currentPage={currentPage}
-                        onCurrentPageChange={this.changeCurrentPage}
-                        pageSize={pageSize}
-                        onPageSizeChange={this.changePageSize}
-                    />
-                    <CustomPaging
-                        totalCount={totalCount}
-                    />
-                    <Table
-                        columnExtensions={tableColumnExtensions}
-                    />
-                    <TableHeaderRow showSortingControls />
-                    <PagingPanel
-                        pageSizes={pageSizes}
-                    />
-                    <TableColumnVisibility />
-                    <Toolbar />
-                    <ColumnChooser />
-                </Grid>
-            </div >
-        );
-    }
+        <Toolbar />
+        <ColumnChooser />
+      </Grid>
+    );
+  }
 }
 export default withStyles(styles)(ResultGrid);

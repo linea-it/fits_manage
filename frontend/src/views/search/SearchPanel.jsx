@@ -6,34 +6,61 @@ import Paper from '@material-ui/core/Paper';
 import CardContent from '@material-ui/core/CardContent';
 
 import ResultGrid from './ResultGrid'
-import FilterPanel from './FilterPanel'
+import SearchForm from './SearchForm'
+
+import SearchApi from 'api/Search'
 
 const styles = theme => ({})
 
 class SearchPanel extends Component {
 
+  state = {
+    data: []
+  }
+
+  componentDidMount() {
+
+    this.loadData();
+
+  }
+
+  loadData = async () => {
+    const exposures = await SearchApi.getAllExposures();
+
+    const data = exposures.allExposures.edges.map(edge => edge.node)
+    this.setState({
+      data: data
+    })
+  }
+
+  handleSearch = (e) => {
+    console.log("handleSearch: ", e)
+  }
+
   render() {
+
+    const { data } = this.state
+
     return (
       <div>
         <Grid container spacing={24}>
-          <Grid item xs={12} sm={12} lg={12}>
-            <Grid item xs={6} sm={6} lg={6}>
-              <Card>
-                <CardContent>
-                  <FilterPanel />
-                </CardContent>
-              </Card>            
-            </Grid>
-          </Grid>
-          <Grid item xs={12} sm={12} lg={12}>
-          <Card>
+          <Grid item xs={6} sm={6} lg={6} >    
+            <Card>
               <CardContent>
-                <ResultGrid />
+              <SearchForm handleSearch={this.handleSearch}/>
               </CardContent>
-            </Card>          
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={12} lg={12}>
+            <Card>
+              <CardContent>
+                <ResultGrid rows={data} />
+              </CardContent>
+            </Card>
           </Grid>
         </Grid>
-      </div>
+      </div >
 
     );
   }

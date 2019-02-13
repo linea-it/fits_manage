@@ -62,7 +62,7 @@ class Exposure(models.Model):
 
     band = models.CharField(
         verbose_name='Band',
-        max_length=5,
+        max_length=10,
         null=True, 
         blank=True,
         default=None,
