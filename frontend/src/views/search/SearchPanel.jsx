@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import Paper from '@material-ui/core/Paper';
 import CardContent from '@material-ui/core/CardContent';
-
+import { forOwn, isEmpty } from 'lodash'
 import ResultGrid from './ResultGrid'
 import SearchForm from './SearchForm'
 import ExposureDetail from 'views/exposure/Detail';
@@ -21,7 +21,15 @@ class SearchPanel extends Component {
     exposureId: null,
     telescopes: [],
     instruments: [],
-    bands: []
+    bands: [],
+    exposureTimes: [],
+    search: {
+      target: "",
+      telescope: "",
+      instrument: "",
+      band: "",
+      exposureTime: 0
+    }
   }
 
   componentDidMount() {
@@ -32,9 +40,6 @@ class SearchPanel extends Component {
 
   loadData = async () => {
 
-    const dxposures = await SearchApi.getAllExposures();
-    const exposures = dxposures.exposures.edges.map(edge => edge.node)
-
     const dtelescopes = await SearchApi.getTelescopes();
     const telescopes = dtelescopes.telescopes;
 
@@ -44,17 +49,45 @@ class SearchPanel extends Component {
     const dbands = await SearchApi.getBands();
     const bands = dbands.bands;
 
+    const dexposureTimes = await SearchApi.getExposureTimes();
+    const exposureTimes = dexposureTimes.exposureTimes;
+
     this.setState({
-      data: exposures,
       telescopes: telescopes,
       instruments: instruments,
-      bands: bands
-    })
+      bands: bands,
+      exposureTimes: exposureTimes
+    }, () => this.loadExposures())
 
   }
 
-  handleSearch = (e) => {
-    
+  loadExposures = async () => {
+
+    const { search } = this.state;
+
+    const dexposures = await SearchApi.getAllExposures(search);
+    const exposures = dexposures.exposures.edges.map(edge => edge.node)
+
+    this.setState({
+      data: exposures,
+    });
+  }
+
+  handleSearch = (fields) => {
+    console.log("handleSearch: ", fields)
+
+    this.setState({
+      search: fields,
+    }, ()=> {this.loadExposures()})
+
+    // const params = []
+
+    // forOwn(fields, function(value, key) {
+    //   if (!isEmpty(value)) {
+    //     console.log("value: %o, key: %o", value, key )
+    //   }
+    // })
+
   }
 
   handleDetail = rowData => {
@@ -75,7 +108,7 @@ class SearchPanel extends Component {
 
   render() {
 
-    const { data, showExposureDetail, exposureId, telescopes, instruments, bands } = this.state
+    const { data, showExposureDetail, exposureId, telescopes, instruments, bands, exposureTimes } = this.state
 
     return (
       <div>
@@ -83,11 +116,11 @@ class SearchPanel extends Component {
           <Grid item xs={12} sm={12} lg={6} xl={4} >    
             <Card>
               <CardContent>
-              <SearchForm handleSearch={this.handleSearch} telescopes={telescopes} instruments={instruments} bands={bands}/>
+              <SearchForm handleSearch={this.handleSearch} telescopes={telescopes} instruments={instruments} bands={bands} exposureTimes={exposureTimes}/>
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={12} lg={6} >    
+          <Grid item xs={12} sm={12} lg={6} xl={8}>    
             <Card>
               <CardContent>
               

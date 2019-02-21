@@ -3,14 +3,29 @@ import Client from 'api/Client'
 
 export default class SearchApi {
 
-  static async getAllExposures() {
+  static async getAllExposures({
+    target,
+    telescope,
+    instrument,
+    band,
+    exposureTime,
+    observer,
+  }) {
     try {
 
       // allExposures(first:20) {
       // allExposures(filename_Icontains: "jup_4o2_01557", first:20) {
+      //  TODO: Filtro por exposureTime, no backend deve ser um filtro expecifico.
+      //exposureTime_Gt: ${exposureTime},
       const exposures = await Client.query(`
         {
-          exposures(filename_Icontains: "jup_4o2_01557", first:20) {
+          exposures(
+            target_Icontains: "${target}",
+            telescope_Iexact: "${telescope}", 
+            instrument_Iexact: "${instrument}",
+            band_Iexact: "${band}",
+            observer_Icontains: "${observer}",
+            first:20) {
             edges {
               node {
                 id
@@ -95,6 +110,19 @@ export default class SearchApi {
       }
       `);
       return bands;
+    } catch (e) {
+      return null;
+    }
+  }  
+
+  static async getExposureTimes() {
+    try {
+      const exposureTimes = await Client.query(`
+      {
+        exposureTimes
+      }
+      `);
+      return exposureTimes;
     } catch (e) {
       return null;
     }

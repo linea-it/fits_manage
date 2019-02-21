@@ -14,7 +14,12 @@ class ExposureNode(DjangoObjectType):
         interfaces = (Node, )
         filter_fields = {
             'filename': ['iexact', 'icontains', 'istartswith'],
-            'target': ['iexact', 'icontains', 'istartswith']
+            'target': ['iexact', 'icontains', 'istartswith'],
+            'telescope': ['iexact'],
+            'instrument': ['iexact'],
+            'band': ['iexact'],
+            'exposure_time':['gt'],
+            'observer': ['iexact', 'icontains', 'istartswith'],
         }
 
 
@@ -36,6 +41,7 @@ class Query(object):
     telescopes = graphene.List(graphene.String)
     instruments = graphene.List(graphene.String)
     bands = graphene.List(graphene.String)
+    exposure_times = graphene.List(graphene.Float)
 
     def resolve_telescopes(self, info):
         return [exposure.telescope for exposure in Exposure.objects.distinct('telescope').order_by('telescope')]
@@ -45,6 +51,11 @@ class Query(object):
 
     def resolve_bands(self, info):
         return [exposure.band for exposure in Exposure.objects.distinct('band').order_by('band')]
+
+    def resolve_exposure_times(self, info):
+        return [exposure.exposure_time for exposure in Exposure.objects.distinct('exposure_time').order_by('exposure_time')]
+
+
 
     # all_telescopes = Node.Field(TelescopeNode)
 

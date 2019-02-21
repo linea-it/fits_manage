@@ -39,7 +39,7 @@ class SearchForm extends Component {
     targetList: '',
     telescope: '',
     instrument: '',
-    exposureTime: '',
+    exposureTime: 0,
     band: '',
     startDate: '',
     endDate: '',
@@ -56,12 +56,12 @@ class SearchForm extends Component {
   //   }
   // }
 
-  // handleSearch = () => {
-  //   this.props.handleSearch(this.state.search)
-  // }
+  handleSearch = () => {
+    this.props.handleSearch(this.state)
+  }
 
   render() {
-    const { classes, telescopes, instruments, bands } = this.props;
+    const { classes, telescopes, instruments, bands, exposureTimes } = this.props;
 
     return (
       <form className={classes.container} noValidate autoComplete="off">
@@ -75,6 +75,7 @@ class SearchForm extends Component {
               className={classes.textField}
               fullWidth
               margin="normal"
+              disabled
             />
             <TextField
               name="observer"
@@ -143,7 +144,7 @@ class SearchForm extends Component {
                 })}
               </Select>
             </FormControl>
-            <TextField
+            {/* <TextField
               id="exposureTime"
               label="Number"
               value={this.state.exposureTime}
@@ -152,7 +153,26 @@ class SearchForm extends Component {
               className={classes.textField}
               fullWidth
               margin="normal"
-            />
+            /> */}
+            <FormControl className={classes.textField} margin="normal" fullWidth>
+              <InputLabel htmlFor="exposureTime">Exposure Time (gt)</InputLabel>
+              <Select
+                native
+                value={this.state.exposureTime}
+                onChange={this.handleChange('exposureTime')}
+                inputProps={{
+                  name: 'exposureTime',
+                  id: 'exposureTime',
+                }}
+              >
+                <option value="0" />
+                {exposureTimes.map((e, i) => {
+                  return (
+                    <option key={i} value={e}>{e}</option>
+                  )
+                })}
+              </Select>
+            </FormControl>
             <FormControl className={classes.textField} margin="normal" fullWidth>
               <InputLabel htmlFor="band">Filter</InputLabel>
               <Select
@@ -246,7 +266,7 @@ class SearchForm extends Component {
             </Card>
           </Grid>
           <Grid container justify="flex-end" alignContent="flex-end">
-            <Button color="primary" variant="contained" >
+            <Button color="primary" variant="contained"  onClick={this.handleSearch}>
               Ok
             </Button>          
           </Grid>
@@ -260,7 +280,8 @@ SearchForm.propTypes = {
   handleSearch: PropTypes.func.isRequired,
   telescopes: PropTypes.array.isRequired,
   instruments: PropTypes.array.isRequired,
-  bands: PropTypes.array.isRequired
+  bands: PropTypes.array.isRequired,
+  exposureTimes: PropTypes.array.isRequired,
 };
 
 export default withStyles(styles)(SearchForm);

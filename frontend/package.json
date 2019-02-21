@@ -10,6 +10,7 @@
     "@material-ui/icons": "^3.0.2",
     "filesize": "^4.0.0",
     "formik": "^1.4.3",
+    "lodash": "^4.17.11",
     "lokka": "^1.7.0",
     "lokka-transport-http": "^1.6.1",
     "moment": "^2.24.0",
