@@ -86,4 +86,17 @@ export default class SearchApi {
       return null;
     }
   }
+
+  static async getBands() {
+    try {
+      const bands = await Client.query(`
+      {
+        bands
+      }
+      `);
+      return bands;
+    } catch (e) {
+      return null;
+    }
+  }  
 }

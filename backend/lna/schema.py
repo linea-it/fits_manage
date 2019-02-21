@@ -35,13 +35,16 @@ class Query(object):
     headers = DjangoFilterConnectionField(HeaderNode)
     telescopes = graphene.List(graphene.String)
     instruments = graphene.List(graphene.String)
-
+    bands = graphene.List(graphene.String)
 
     def resolve_telescopes(self, info):
-        return [exposure.telescope for exposure in Exposure.objects.distinct('telescope')]
+        return [exposure.telescope for exposure in Exposure.objects.distinct('telescope').order_by('telescope')]
 
     def resolve_instruments(self, info):
-        return [exposure.instrument for exposure in Exposure.objects.distinct('instrument')]
+        return [exposure.instrument for exposure in Exposure.objects.distinct('instrument').order_by('instrument')]
+
+    def resolve_bands(self, info):
+        return [exposure.band for exposure in Exposure.objects.distinct('band').order_by('band')]
 
     # all_telescopes = Node.Field(TelescopeNode)
 

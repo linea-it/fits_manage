@@ -20,7 +20,8 @@ class SearchPanel extends Component {
     showExposureDetail: false,
     exposureId: null,
     telescopes: [],
-    instruments: []
+    instruments: [],
+    bands: []
   }
 
   componentDidMount() {
@@ -30,9 +31,9 @@ class SearchPanel extends Component {
   }
 
   loadData = async () => {
-    const data = await SearchApi.getAllExposures();
 
-    const exposures = data.exposures.edges.map(edge => edge.node)
+    const dxposures = await SearchApi.getAllExposures();
+    const exposures = dxposures.exposures.edges.map(edge => edge.node)
 
     const dtelescopes = await SearchApi.getTelescopes();
     const telescopes = dtelescopes.telescopes;
@@ -40,10 +41,14 @@ class SearchPanel extends Component {
     const dinstruments = await SearchApi.getInstruments();
     const instruments = dinstruments.instruments;
 
+    const dbands = await SearchApi.getBands();
+    const bands = dbands.bands;
+
     this.setState({
       data: exposures,
       telescopes: telescopes,
       instruments: instruments,
+      bands: bands
     })
 
   }
@@ -70,7 +75,7 @@ class SearchPanel extends Component {
 
   render() {
 
-    const { data, showExposureDetail, exposureId, telescopes, instruments } = this.state
+    const { data, showExposureDetail, exposureId, telescopes, instruments, bands } = this.state
 
     return (
       <div>
@@ -78,7 +83,7 @@ class SearchPanel extends Component {
           <Grid item xs={12} sm={12} lg={6} xl={4} >    
             <Card>
               <CardContent>
-              <SearchForm handleSearch={this.handleSearch} telescopes={telescopes} instruments={instruments}/>
+              <SearchForm handleSearch={this.handleSearch} telescopes={telescopes} instruments={instruments} bands={bands}/>
               </CardContent>
             </Card>
           </Grid>
