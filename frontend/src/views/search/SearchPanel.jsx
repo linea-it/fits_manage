@@ -7,6 +7,7 @@ import CardContent from '@material-ui/core/CardContent';
 
 import ResultGrid from './ResultGrid'
 import SearchForm from './SearchForm'
+import ExposureDetail from 'views/exposure/Detail';
 
 import SearchApi from 'api/Search'
 
@@ -15,7 +16,11 @@ const styles = theme => ({})
 class SearchPanel extends Component {
 
   state = {
-    data: []
+    data: [],
+    showExposureDetail: false,
+    exposureId: null,
+    telescopes: [],
+    instruments: []
   }
 
   componentDidMount() {
@@ -25,33 +30,59 @@ class SearchPanel extends Component {
   }
 
   loadData = async () => {
-    const exposures = await SearchApi.getAllExposures();
+    const data = await SearchApi.getAllExposures();
 
-    const data = exposures.allExposures.edges.map(edge => edge.node)
+    const exposures = data.exposures.edges.map(edge => edge.node)
+
+    const dtelescopes = await SearchApi.getTelescopes();
+    const telescopes = dtelescopes.telescopes;
+
+    const dinstruments = await SearchApi.getInstruments();
+    const instruments = dinstruments.instruments;
+
     this.setState({
-      data: data
+      data: exposures,
+      telescopes: telescopes,
+      instruments: instruments,
     })
+
   }
 
   handleSearch = (e) => {
-    console.log("handleSearch: ", e)
+    
+  }
+
+  handleDetail = rowData => {
+    console.log("handleDetail: ", rowData);
+    this.setState({
+      exposureId: rowData.id,
+      showExposureDetail: true,
+    })
+  }
+
+  handleCloseDetail = () => {
+    console.log("handleCloseDetail");
+    this.setState({
+      exposureId: null,
+      showExposureDetail: false,
+    })
   }
 
   render() {
 
-    const { data } = this.state
+    const { data, showExposureDetail, exposureId, telescopes, instruments } = this.state
 
     return (
       <div>
         <Grid container spacing={24} >
-          <Grid item xs={6} sm={6} lg={6} >    
+          <Grid item xs={12} sm={12} lg={6} xl={4} >    
             <Card>
               <CardContent>
-              <SearchForm handleSearch={this.handleSearch}/>
+              <SearchForm handleSearch={this.handleSearch} telescopes={telescopes} instruments={instruments}/>
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={6} sm={6} lg={6} >    
+          <Grid item xs={12} sm={12} lg={6} >    
             <Card>
               <CardContent>
               
@@ -61,11 +92,12 @@ class SearchPanel extends Component {
           <Grid item xs={12} sm={12} lg={12}>
             <Card>
               <CardContent>
-                <ResultGrid rows={data} />
+                <ResultGrid rows={data} onDetail={this.handleDetail}/>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
+        <ExposureDetail open={showExposureDetail} exposureId={exposureId} onClose={this.handleCloseDetail} />
       </div >
 
     );

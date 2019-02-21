@@ -3,7 +3,7 @@ from django.db import models
 from lna.models import Exposure
 class Header(models.Model):
 
-    archive = models.ForeignKey(
+    exposure = models.ForeignKey(
         Exposure, 
         related_name='headers',
         on_delete=models.CASCADE
@@ -14,9 +14,15 @@ class Header(models.Model):
         max_length=256,
     )
 
-    value = models.CharField(
-        max_length=2048,
+    value = models.TextField(
         verbose_name='Value',
         null=True, 
-        blank=True
+        blank=True,
+        default=None
     )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['exposure']),
+            models.Index(fields=['name']),
+        ]

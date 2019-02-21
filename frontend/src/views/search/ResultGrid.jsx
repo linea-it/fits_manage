@@ -10,6 +10,9 @@ import {
 } from '@devexpress/dx-react-grid';
 import moment from 'moment';
 import filesize from 'filesize';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import ZoomIn from '@material-ui/icons/ZoomIn';
 
 const DateFormatter = ({ value }) => `${moment(value).locale('en').format("L LTS")}`;
 
@@ -30,7 +33,11 @@ const SizeTypeProvider = props => (
 );
 
 
-const styles = theme => ({})
+const styles = theme => ({
+  button: {
+    margin: theme.spacing.unit,
+  },
+})
 
 class ResultGrid extends Component {
 
@@ -39,6 +46,7 @@ class ResultGrid extends Component {
   get initialState() {
     return {
       columns: [
+        { name: 'detail', title: ' ' },
         { name: 'filename', title: 'Filename' },
         { name: 'target', title: 'Target' },
         { name: 'ra', title: 'RA' },
@@ -52,6 +60,7 @@ class ResultGrid extends Component {
         { name: 'fileSize', title: 'Size' },
       ],
       defaultColumnWidths: [
+        { columnName: 'detail', width: 100 },
         { columnName: 'filename', width: 220 },
         { columnName: 'target', width: 120 },
         { columnName: 'ra', width: 80 },
@@ -64,18 +73,58 @@ class ResultGrid extends Component {
         { columnName: 'observer', width: 120 },
         { columnName: 'fileSize', width: 80 },
       ],
+      tableColumnExtensions: [
+        { columnName: 'detail', align: 'center' },
+        { columnName: 'filename', align: 'left'  },
+        { columnName: 'target', align: 'left'  },
+        { columnName: 'ra', align: 'center' },
+        { columnName: 'dec', align: 'center' },
+        { columnName: 'dateObs', align: 'left'  },
+        { columnName: 'band', align: 'center' },
+        { columnName: 'exposureTime', align: 'center' },
+        { columnName: 'telescope', align: 'left'  },
+        { columnName: 'instrument', align: 'left'  },
+        { columnName: 'observer', align: 'left'  },
+        { columnName: 'fileSize', align: 'center' },
+      ],
+
       sorting: [{ columnName: 'dateObs', direction: 'asc' }],
       loading: false,
     }
   }
 
+  renderButtonView = rowData => {
+    const {classes} = this.props; 
+
+    if (rowData !== null) {
+      return (
+        <IconButton variant="contained" className={classes.button} onClick={()=>this.onView(rowData)}>
+          <ZoomIn />
+        </IconButton>
+      );
+    }
+
+    return null;
+  };
+
+  onView = rowData => {
+    this.props.onDetail(rowData);
+  }
+
   render() {
-    // const { classes } = this.props;
+
     const { rows } = this.props;
     const {
       columns,
-      defaultColumnWidths
+      defaultColumnWidths,
+      tableColumnExtensions,
     } = this.state;
+
+
+    rows.map(row => {
+      row.detail = this.renderButtonView(row);
+      return row;
+    })
 
     return (
       <Grid
@@ -92,7 +141,7 @@ class ResultGrid extends Component {
           for={['fileSize']}
           />
 
-        <Table />
+        <Table columnExtensions={tableColumnExtensions}/>
         <TableColumnResizing defaultColumnWidths={defaultColumnWidths} />
         <TableHeaderRow showSortingControls />
         <TableColumnVisibility />

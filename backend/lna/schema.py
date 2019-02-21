@@ -18,15 +18,33 @@ class ExposureNode(DjangoObjectType):
         }
 
 
-# class HeaderType(DjangoObjectType):
-#     class Meta:
-#         model = Header
+class HeaderNode(DjangoObjectType):
+    class Meta:
+        model = Header
+        interfaces = (Node, )
+        filter_fields = {
+            'exposure',
+        }
+
 
 
 class Query(object):
 
     exposure = Node.Field(ExposureNode)
-    all_exposures = DjangoFilterConnectionField(ExposureNode)
+    exposures = DjangoFilterConnectionField(ExposureNode)
+    headers = DjangoFilterConnectionField(HeaderNode)
+    telescopes = graphene.List(graphene.String)
+    instruments = graphene.List(graphene.String)
+
+
+    def resolve_telescopes(self, info):
+        return [exposure.telescope for exposure in Exposure.objects.distinct('telescope')]
+
+    def resolve_instruments(self, info):
+        return [exposure.instrument for exposure in Exposure.objects.distinct('instrument')]
+
+    # all_telescopes = Node.Field(TelescopeNode)
+
 
     # def resolve_all_exposures(self, info, **kwargs):
     #     return Exposure.objects.all()

@@ -12,5 +12,5 @@ class ExposureAdmin(admin.ModelAdmin):
 
 @admin.register(Header)
 class HeaderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'archive', 'name', 'value')
+    list_display = ('id', 'exposure', 'name', 'value')
     # search_fields = ()

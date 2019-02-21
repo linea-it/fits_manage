@@ -61,7 +61,7 @@ class SearchForm extends Component {
   // }
 
   render() {
-    const { classes } = this.props;
+    const { classes, telescopes, instruments } = this.props;
 
     return (
       <form className={classes.container} noValidate autoComplete="off">
@@ -117,9 +117,11 @@ class SearchForm extends Component {
 
               >
                 <option value="" />
-                <option value={10}>Value 1</option>
-                <option value={20}>Value 2</option>
-                <option value={30}>Value 3</option>
+                {telescopes.map((e, i) => {
+                  return (
+                    <option key={i} value={e}>{e}</option>
+                  )
+                })}
               </Select>
             </FormControl>
             <FormControl className={classes.textField} margin="normal" fullWidth>
@@ -134,9 +136,11 @@ class SearchForm extends Component {
                 }}
               >
                 <option value="" />
-                <option value={10}>Value 1</option>
-                <option value={20}>Value 2</option>
-                <option value={30}>Value 3</option>
+                {instruments.map((e, i) => {
+                  return (
+                    <option key={i} value={e}>{e}</option>
+                  )
+                })}
               </Select>
             </FormControl>
             <TextField
@@ -252,6 +256,8 @@ class SearchForm extends Component {
 SearchForm.propTypes = {
   classes: PropTypes.object.isRequired,
   handleSearch: PropTypes.func.isRequired,
+  telescopes: PropTypes.array.isRequired,
+  instruments: PropTypes.array.isRequired,
 };
 
 export default withStyles(styles)(SearchForm);

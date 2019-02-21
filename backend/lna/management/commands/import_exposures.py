@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
+from django.db import connection
 import os
 import csv
 from lna.models import Exposure, Header
@@ -27,9 +28,10 @@ class Command(BaseCommand):
 
         self.stdout.write("Removing records")
         count = Exposure.objects.count()
-        # Para cada registro no Model Exposure, executar o comando delete
-        for x in Exposure.objects.all().iterator():
-            x.delete()
+
+        with connection.cursor() as cursor:
+            cursor.execute("DELETE FROM %s" % Header._meta.db_table)
+            cursor.execute("DELETE FROM %s" % Exposure._meta.db_table)
 
         self.stdout.write("Removed %s records" % count)
 
@@ -82,7 +84,7 @@ class Command(BaseCommand):
 
         except Exception as e:
             self.stdout.write("FAILED: [ %s ] Error [ %s ]" % (row.filename, e))
-            raise(e)
+            # raise(e)
 
     def handle(self, *args, **options):
 
