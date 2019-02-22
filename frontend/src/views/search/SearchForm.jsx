@@ -100,9 +100,9 @@ class SearchForm extends Component {
                   fullWidth
                   margin="normal"
                 />
-                <Button color="primary" variant="contained" className={classes.buttonUpload}>
+                <Button color="primary" variant="contained" className={classes.buttonUpload} disabled>
                   Upload Target List
-              </Button>
+                </Button>
               </CardContent>
             </Card>
             <FormControl className={classes.textField} margin="normal" fullWidth>
@@ -230,7 +230,7 @@ class SearchForm extends Component {
             <Card className={classes.card} elevation={2}>
               <CardContent>
                 <Typography className={classes.title} color="textSecondary" gutterBottom>
-                  RA/Dec
+                  Coordinates
                 </Typography>
                 <TextField
                   id="ra"
