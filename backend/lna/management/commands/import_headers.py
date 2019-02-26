@@ -22,6 +22,13 @@ class Command(BaseCommand):
         parser.add_argument(
             'path', type=str, help='path to the directory where the json with the headers are to be imported. this directory must be in / archive.')
 
+        parser.add_argument(
+            '--constraint',
+            action='store_true',
+            dest='constraint',
+            help='Only records headers for exposures that are already registered.',
+        )
+
         # Apaga todas os registros antes de incluir novos
         parser.add_argument(
             '--delete',
@@ -40,41 +47,47 @@ class Command(BaseCommand):
 
         self.stdout.write("Removed %s records" % count)
 
-    def create_record(self, filename, data):
+    def create_record(self, filepath):
         # self.stdout.write("Data: [ %s ]" % (data))
         try:
+            with open(os.path.join(filepath)) as f:
+               
+                data = json.load(f)
 
-            c_headers = 0
+                filename = os.path.basename(filepath)
 
-            e_filename = os.path.splitext(filename)[0]
-            exposure = Exposure.objects.get(filename='%s.fits' % e_filename)
+                c_headers = 0
 
-            for name in data:
+                e_filename = os.path.splitext(filename)[0]
+                exposure = Exposure.objects.get(
+                    filename='%s.fits' % e_filename)
 
-                value = data[name]
-                if isinstance(value, str):
+                for name in data:
 
-                    value = value.replace('\n', ' ').strip()
-                    if value == '':
-                        value = None
+                    value = data[name]
+                    if isinstance(value, str):
 
-                record, created = Header.objects.update_or_create(
-                    exposure=exposure,
-                    name=name,
-                    defaults={
-                        'value': value,
-                    })
+                        value = value.replace('\n', ' ').strip()
+                        if value == '':
+                            value = None
 
-                if created:
-                    self.header_created += 1
-                else:
-                    self.header_updated += 1
+                    record, created = Header.objects.update_or_create(
+                        exposure=exposure,
+                        name=name,
+                        defaults={
+                            'value': value,
+                        })
 
-                c_headers += 1
+                    if created:
+                        self.header_created += 1
+                    else:
+                        self.header_updated += 1
 
-            self.success += 1
-            self.stdout.write(
-                "SUCCESS: [ %s ] Headers [ %s ]" % (filename, c_headers))
+                    c_headers += 1
+
+                self.success += 1
+                self.stdout.write(
+                    "SUCCESS: [ %s ] Headers [ %s ]" % (filename, c_headers))
 
         except Exception as e:
             self.stdout.write("FAILED: [ %s ] Error [ %s ]" % (filename, e))
@@ -99,13 +112,28 @@ class Command(BaseCommand):
         if not os.path.isdir(directory):
             self.stdout.write("Directory not found")
 
-        for filename in os.listdir(directory):
-            if filename.endswith(".json"):
-                self.count_files += 1
+        if options['constraint']:
+            exposures = Exposure.objects.all()
+
+            for exposure in exposures:
+                filename = exposure.filename.replace('.fits', '.json')
                 self.stdout.write("Importing file: %s" % filename)
-                with open(os.path.join(directory, filename)) as f:
-                    data = json.load(f)
-                    self.create_record(filename, data)
+
+                filepath = os.path.join(directory, filename)
+
+                if os.path.exists(filepath):
+                    self.create_record(filepath)
+                else:
+                    self.stdout.write("File does not exist: %s" % filepath)
+
+        else:
+            for filename in os.listdir(directory):
+                if filename.endswith(".json"):
+                    self.count_files += 1
+                    self.stdout.write("Importing file: %s" % filename)
+
+                    filepath = os.path.join(directory, filename)
+                    self.create_record(filepath)
 
         self.stdout.write("Files: [ %s ] Success: [ %s ] Failed: [ %s ] HeaderCreated: [ %s ] HeaderUpdated: [ %s ] " % (
             self.count_files, self.success, self.failed, self.header_created, self.header_updated))

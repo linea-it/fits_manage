@@ -28,10 +28,9 @@ ARCHIVE_DIR = "/archive"
 SECRET_KEY = 't8j-&!j01^ceb5p_#e$819gxx1mamd8+2f=!bi)!2u%etn^j6n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
+DEBUG = False
+if 'DEBUG' in os.environ:
+    DEBUG = os.environ['DEBUG']
 
 # Application definition
 
@@ -143,9 +142,10 @@ MEDIA_URL = '/media/'
 #     os.mkdir(MEDIA_TMP_DIR)
 
 # MEDIA_TMP_URL = urllib.parse.urljoin(MEDIA_URL, 'tmp/')
+ALLOWED_HOSTS = ['lna.linea.gov.br']
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
 
-
-ALLOWED_HOSTS = []
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 

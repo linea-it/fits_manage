@@ -18,6 +18,15 @@ class Command(BaseCommand):
 
         # Apaga todas os registros antes de incluir novos
         parser.add_argument(
+            '--limit',
+            nargs='?',
+            type=int,
+            default=None,
+            help='Limits the amount of records that will be imported. useful for testing and development. example --limit 1000',
+        )
+
+        # Apaga todas os registros antes de incluir novos
+        parser.add_argument(
             '--delete',
             action='store_true',
             dest='delete',
@@ -102,7 +111,8 @@ class Command(BaseCommand):
         file_path = os.path.join(settings.ARCHIVE_DIR,
                                  os.path.basename(filename))
 
-        self.stdout.write(file_path)
+        self.stdout.write("Filepath: %s" % file_path)
+        self.stdout.write("Limit: %s" % options['limit'])
 
         if not os.path.exists(file_path):
             self.stdout.write("Arquivo nao encontrado")
@@ -116,7 +126,8 @@ class Command(BaseCommand):
             dtype={
                 "file_size": int
             },
-            skiprows=1)
+            skiprows=1,
+            nrows=options['limit'])
 
         for row in data.itertuples():
             self.create_record(row)
