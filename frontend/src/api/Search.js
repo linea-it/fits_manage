@@ -13,6 +13,10 @@ export default class SearchApi {
   }) {
     try {
 
+      telescope = telescope === "any" ? '' : telescope;
+      instrument = instrument === "any" ? '' : instrument;
+      band = band === "any" ? '' : band;
+      exposureTime = exposureTime === "any" ? 0 : exposureTime;
       // allExposures(first:20) {
       // allExposures(filename_Icontains: "jup_4o2_01557", first:20) {
       //  TODO: Filtro por exposureTime, no backend deve ser um filtro expecifico.
@@ -40,6 +44,7 @@ export default class SearchApi {
                 instrument
                 observer
                 fileSize
+                haveHeaders
               }
             }
           } 

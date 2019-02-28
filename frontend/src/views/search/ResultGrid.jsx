@@ -122,7 +122,9 @@ class ResultGrid extends Component {
 
 
     rows.map(row => {
-      row.detail = this.renderButtonView(row);
+      if (row.haveHeaders) {
+        row.detail = this.renderButtonView(row);
+      }      
       return row;
     })
 

@@ -37,10 +37,10 @@ class SearchForm extends Component {
     observer: '',
     target: '',
     targetList: '',
-    telescope: '',
-    instrument: '',
-    exposureTime: 0,
-    band: '',
+    telescope: 'any',
+    instrument: 'any',
+    exposureTime: 'any',
+    band: 'any',
     startDate: '',
     endDate: '',
   }
@@ -117,7 +117,7 @@ class SearchForm extends Component {
                 }}
 
               >
-                <option value="" />
+                <option value="any">Any</option>
                 {telescopes.map((e, i) => {
                   return (
                     <option key={i} value={e}>{e}</option>
@@ -136,7 +136,7 @@ class SearchForm extends Component {
                   id: 'instrument',
                 }}
               >
-                <option value="" />
+                <option value="any">Any</option>
                 {instruments.map((e, i) => {
                   return (
                     <option key={i} value={e}>{e}</option>
@@ -165,7 +165,7 @@ class SearchForm extends Component {
                   id: 'exposureTime',
                 }}
               >
-                <option value="0" />
+                <option value="any">Any</option>
                 {exposureTimes.map((e, i) => {
                   return (
                     <option key={i} value={e}>{e}</option>
@@ -184,7 +184,7 @@ class SearchForm extends Component {
                   id: 'band',
                 }}
               >
-                <option value="" />
+                <option value="any">Any</option>
                 {bands.map((e, i) => {
                   return (
                     <option key={i} value={e}>{e}</option>

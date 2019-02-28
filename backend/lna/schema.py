@@ -22,6 +22,11 @@ class ExposureNode(DjangoObjectType):
             'observer': ['iexact', 'icontains', 'istartswith'],
         }
 
+    have_headers = graphene.Boolean()
+    def resolve_have_headers(self, info):
+        if self.headers.count() > 0:
+            return True
+        return False
 
 class HeaderNode(DjangoObjectType):
     class Meta:

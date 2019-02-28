@@ -8,6 +8,7 @@ import { forOwn, isEmpty } from 'lodash'
 import ResultGrid from './ResultGrid'
 import SearchForm from './SearchForm'
 import ExposureDetail from 'views/exposure/Detail';
+import Aladin from 'components/Aladin/Aladin';
 
 import SearchApi from 'api/Search'
 
@@ -123,7 +124,7 @@ class SearchPanel extends Component {
           <Grid item xs={12} sm={12} lg={6} xl={8}>    
             <Card>
               <CardContent>
-              
+              <Aladin />
               </CardContent>
             </Card>
           </Grid>
