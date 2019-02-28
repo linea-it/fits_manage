@@ -37,6 +37,8 @@ export default class SearchApi {
                 target
                 ra
                 dec
+                raDeg
+                decDeg
                 dateObs
                 band
                 exposureTime

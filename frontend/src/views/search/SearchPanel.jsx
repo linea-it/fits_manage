@@ -111,6 +111,8 @@ class SearchPanel extends Component {
 
     const { data, showExposureDetail, exposureId, telescopes, instruments, bands, exposureTimes } = this.state
 
+    console.log("Data: ", data)
+
     return (
       <div>
         <Grid container spacing={24} >
@@ -124,7 +126,7 @@ class SearchPanel extends Component {
           <Grid item xs={12} sm={12} lg={6} xl={8}>    
             <Card>
               <CardContent>
-              <Aladin />
+              <Aladin exposures={data}/>
               </CardContent>
             </Card>
           </Grid>
