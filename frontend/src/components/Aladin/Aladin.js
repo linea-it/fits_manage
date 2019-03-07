@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { uniqueId } from 'lodash'
+import PropTypes from 'prop-types';
 import sizeMe from 'react-sizeme'
 import { desfootprint } from './DesFootprint';
-// import {ExposureApi} from './ExposureApi';
 
 class Aladin extends Component {
   // api = new ExposureApi();
@@ -52,25 +52,12 @@ class Aladin extends Component {
     }
   }
 
-  componentWillMount() {
-    // Antes do Render do Component
-
-  }
-
   componentDidMount = () => {
-    // console.log("Depois do component estar renderizado")
-
     this.create_aladin();
-
   }
-
-  // componentWillUpdate = (nextProps) => {
-  //   if (this.props.exposures !== nextProps.exposures) {
-  //     this.plotExposures(nextProps.exposures);
-  //   }
-  // }
 
   create_aladin = () => {
+
     this.aladin = this.libA.aladin(
       // Id da div que recebera o aladin
       '#' + this.id,
@@ -78,10 +65,14 @@ class Aladin extends Component {
       this.aladinOptions
     )
 
-    this.footprint(desfootprint, 'DES Footprint', true)
+    if (this.props.desfootprint) {
+      this.footprint(desfootprint, 'DES Footprint', true)
+    }
 
     return this.aladin;
   }
+
+
 
   footprint = (footprint = [], name = 'footprint', visible = true) => {
     const aladin = this.aladin;
@@ -123,101 +114,38 @@ class Aladin extends Component {
     }
   }
 
-  // plotExposures = (exposures = [], name = "Exposures") => {
-  //   console.log('plotExposures:', exposures)
-  //   const aladin = this.aladin;
-
-  //   // Verificar se os ccds ja foram plotados
-  //   let overlay = this.getOverlayByName(name);
-  //   if (overlay) {
-  //     // Se ja existir exibir
-  //     overlay.show();
-  //   } else {
-  //     // Se nao existir criar 
-  //     overlay = this.libA.graphicOverlay({
-  //       color: '#1DFF00',
-  //       lineWidth: 1,
-  //       name: String(name)
-  //     })
-
-  //     aladin.addOverlay(overlay);
-
-  //     exposures.forEach((item) => {
-  //       console.log('item:', item)
-  //       const exposure = this.libA.circle(item.raDeg, item.decDeg, 5, {});
-  //       overlay.add(exposure);
-  //     })
-  //   }
-  // }
-
   plotExposures = (exposures = [], name = "Exposures") => {
     console.log('plotExposures:', exposures)
-    const aladin = this.aladin;
+    // const aladin = this.aladin;
 
-    var catalog = this.libA.catalog({name: 'Exposures', sourceSize: 50});
+    this.aladin.removeLayers()
+    if (exposures && exposures.length > 0) {
 
-    exposures.forEach((item) => {
-      catalog.addSources(
-        [this.libA.marker(item.raDec, item.deDec, {popupTitle: 'Alcyone', popupDesc: ''})]);
-    })
+      var catalog = this.libA.catalog({
+        name: 'Exposures',
+        sourceSize: 18
+      });
 
-    aladin.addCatalog(catalog);
-
-    // Verificar se os ccds ja foram plotados
-    let overlay = this.getOverlayByName(name);
-    if (overlay) {
-      // Se ja existir exibir
-      overlay.show();
-    } else {
-      // Se nao existir criar 
-      overlay = this.libA.graphicOverlay({
-        color: '#1DFF00',
-        lineWidth: 1,
-        name: String(name)
-      })
-
-      aladin.addOverlay(overlay);
-
+      this.aladin.addCatalog(catalog);
       exposures.forEach((item) => {
-        console.log('item:', item)
-        const exposure = this.libA.circle(item.raDeg, item.decDeg, 1, {});
-        overlay.add(exposure);
+        catalog.addSources(
+          [
+            this.libA.marker(
+              item.raDeg,
+              item.decDeg,
+              {
+                popupTitle: item.filename,
+                popupDesc: `<em>Target:</em> ${item.target} <br/><em>Position: </em> ${item.ra} ${item.dec}<br/>`
+              }
+            )
+          ]);
       })
+
+      // Posiciona na coordenada do primeiro elemento
+      this.aladin.gotoRaDec(exposures[0].raDeg, exposures[0].decDeg)
+
     }
   }
-
-
-  // plot_ccds = (ccds = [], name = 'CCDs') => {
-
-  //   const aladin = this.aladin;
-
-  //   // Verificar se os ccds ja foram plotados
-  //   let overlay = this.getOverlayByName(name);
-  //   if (overlay) {
-  //     // Se ja existir exibir
-  //     overlay.show();
-  //   } else {
-  //     // Se nao existir criar 
-  //     overlay = this.libA.graphicOverlay({
-  //       color: '#64e544',
-  //       lineWidth: 1,
-  //       name: String(name)
-  //     })
-
-  //     aladin.addOverlay(overlay);
-
-  //     ccds.forEach((item) => {
-  //       const tPath = [
-  //         [item.rac4, item.decc4],
-  //         [item.rac3, item.decc3],
-  //         [item.rac2, item.decc2],
-  //         [item.rac1, item.decc1],
-  //       ];
-
-  //       overlay.add(this.libA.polygon(tPath));
-  //     })
-  //   }
-  // }
 
   getOverlayByName = (name) => {
     const aladin = this.aladin;
@@ -243,18 +171,20 @@ class Aladin extends Component {
       height = width / 2;
     }
 
-    console.log("Render")
-
     if (this.aladin) {
       this.plotExposures(this.props.exposures);
     }
-    
 
     return (
       <div id={this.id} className="aladin-container" style={{ width: width, height: height }}></div>
     );
   }
 }
+
+Aladin.propTypes = {
+  exposures: PropTypes.array.isRequired,
+  desfootprint: PropTypes.bool,
+};
 
 export default sizeMe({ monitorHeight: true, monitorWidth: true })(Aladin);
 
