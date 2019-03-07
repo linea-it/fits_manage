@@ -3,16 +3,17 @@ import { withStyles } from '@material-ui/core/styles';
 import {
   Grid, Table, TableHeaderRow, ColumnChooser,
   TableColumnVisibility, Toolbar, TableColumnResizing,
+  TableSelection,
 } from '@devexpress/dx-react-grid-material-ui';
 import {
   SortingState, IntegratedSorting,
-  DataTypeProvider,
+  DataTypeProvider, SelectionState
 } from '@devexpress/dx-react-grid';
 import moment from 'moment';
 import filesize from 'filesize';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import ZoomIn from '@material-ui/icons/ZoomIn';
+import PropTypes from 'prop-types'
 
 const DateFormatter = ({ value }) => `${moment(value).locale('en').format("L LTS")}`;
 
@@ -87,9 +88,9 @@ class ResultGrid extends Component {
         { columnName: 'observer', align: 'left'  },
         { columnName: 'fileSize', align: 'center' },
       ],
-
       sorting: [{ columnName: 'dateObs', direction: 'asc' }],
       loading: false,
+      selection: [],
     }
   }
 
@@ -111,13 +112,38 @@ class ResultGrid extends Component {
     this.props.onDetail(rowData);
   }
 
+  changeSelection = selection => {
+    // Neste caso a selecao e para uma linha apenas, 
+    var selected_id, selectedRow;
+    if (selection.length > 0) {
+      // comparar a selecao atual com a anterior para descobrir qual
+      // linha foi selecionado por ultimo
+      let diff = selection.filter(x => !this.state.selection.includes(x));
+
+      selection = diff
+      selected_id = diff[0]
+      selectedRow = this.props.rows[selected_id];
+
+    } else {
+      selection = [];
+      selectedRow = null;
+    }
+
+    this.setState({
+      selection, selectedRow,
+    }, this.props.handleSelection(selectedRow))
+  }
+ 
   render() {
+
+    console.log(this.props)
 
     const { rows } = this.props;
     const {
       columns,
       defaultColumnWidths,
       tableColumnExtensions,
+      selection
     } = this.state;
 
 
@@ -143,10 +169,16 @@ class ResultGrid extends Component {
           for={['fileSize']}
           />
 
+        <SelectionState
+            selection={selection}
+            onSelectionChange={this.changeSelection}
+          />
+
         <Table columnExtensions={tableColumnExtensions}/>
         <TableColumnResizing defaultColumnWidths={defaultColumnWidths} />
         <TableHeaderRow showSortingControls />
         <TableColumnVisibility />
+        <TableSelection highlightRow={true} selectByRowClick={true} showSelectionColumn={false} />
 
         <Toolbar />
         <ColumnChooser />
@@ -154,4 +186,10 @@ class ResultGrid extends Component {
     );
   }
 }
+
+ResultGrid.propTypes = {
+  classes: PropTypes.object.isRequired,
+  rows: PropTypes.array.isRequired,
+  handleSelection: PropTypes.func.isRequired
+};
 export default withStyles(styles)(ResultGrid);

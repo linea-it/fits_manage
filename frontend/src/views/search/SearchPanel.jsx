@@ -30,7 +30,9 @@ class SearchPanel extends Component {
       instrument: "",
       band: "",
       exposureTime: 0
-    }
+    },
+
+    selected: {}
   }
 
   componentDidMount() {
@@ -75,24 +77,12 @@ class SearchPanel extends Component {
   }
 
   handleSearch = (fields) => {
-    console.log("handleSearch: ", fields)
-
     this.setState({
       search: fields,
     }, ()=> {this.loadExposures()})
-
-    // const params = []
-
-    // forOwn(fields, function(value, key) {
-    //   if (!isEmpty(value)) {
-    //     console.log("value: %o, key: %o", value, key )
-    //   }
-    // })
-
   }
 
   handleDetail = rowData => {
-    console.log("handleDetail: ", rowData);
     this.setState({
       exposureId: rowData.id,
       showExposureDetail: true,
@@ -100,18 +90,26 @@ class SearchPanel extends Component {
   }
 
   handleCloseDetail = () => {
-    console.log("handleCloseDetail");
     this.setState({
       exposureId: null,
       showExposureDetail: false,
     })
   }
 
+  handleSelection = selected => {
+    this.setState({selected: selected})
+  }
+
   render() {
 
-    const { data, showExposureDetail, exposureId, telescopes, instruments, bands, exposureTimes } = this.state
+    const { data, showExposureDetail, exposureId, telescopes, instruments, bands, exposureTimes, selected } = this.state
 
     console.log("Data: ", data)
+
+    var position = [];
+    if (selected) {
+      position = [selected.raDeg,  selected.decDeg];
+    }
 
     return (
       <div>
@@ -126,14 +124,14 @@ class SearchPanel extends Component {
           <Grid item xs={12} sm={12} lg={6} xl={8}>    
             <Card>
               <CardContent>
-              <Aladin exposures={data} desfootprint={false}/>
+              <Aladin exposures={data} desfootprint={false} position={position}/>
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={12} sm={12} lg={12}>
             <Card>
               <CardContent>
-                <ResultGrid rows={data} onDetail={this.handleDetail}/>
+                <ResultGrid rows={data} onDetail={this.handleDetail} handleSelection={this.handleSelection}/>
               </CardContent>
             </Card>
           </Grid>
