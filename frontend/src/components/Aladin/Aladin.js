@@ -123,7 +123,8 @@ class Aladin extends Component {
 
       var catalog = this.libA.catalog({
         name: 'Exposures',
-        sourceSize: 18
+        sourceSize: 18,
+        color: '#1DFF00',
       });
 
       this.aladin.addCatalog(catalog);
@@ -165,6 +166,9 @@ class Aladin extends Component {
 
 
   render() {
+
+    const { position } = this.props;
+
     // Ajuste no Tamanho do container
     let { width, height } = this.props.size
     if (height === 0) {
@@ -172,8 +176,15 @@ class Aladin extends Component {
     }
 
     if (this.aladin) {
+
       this.plotExposures(this.props.exposures);
+     
+      if (position && position.length > 0) {
+        this.aladin.gotoRaDec(position[0], position[1])
+      }
     }
+
+
 
     return (
       <div id={this.id} className="aladin-container" style={{ width: width, height: height }}></div>
@@ -184,6 +195,7 @@ class Aladin extends Component {
 Aladin.propTypes = {
   exposures: PropTypes.array.isRequired,
   desfootprint: PropTypes.bool,
+  position: PropTypes.array,
 };
 
 export default sizeMe({ monitorHeight: true, monitorWidth: true })(Aladin);
