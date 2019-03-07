@@ -126,7 +126,7 @@ class SearchPanel extends Component {
           <Grid item xs={12} sm={12} lg={6} xl={8}>    
             <Card>
               <CardContent>
-              <Aladin exposures={data}/>
+              <Aladin exposures={data} desfootprint={false}/>
               </CardContent>
             </Card>
           </Grid>
