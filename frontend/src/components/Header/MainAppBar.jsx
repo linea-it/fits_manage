@@ -43,7 +43,7 @@ function MainAppBar(props) {
         >
           <MenuIcon />
         </IconButton> */}
-        <Typography variant="h6" color="inherit" className={classes.grow}>
+        <Typography variant="h5" color="inherit" className={classes.grow}>
           {getTitle()}
         </Typography>
         {/* <Button color="inherit">Login</Button> */}

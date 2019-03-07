@@ -11,9 +11,12 @@ import Home from 'views/Home/'
 const theme = createMuiTheme({
   palette: {
     // type: 'dark',
-    type: 'light',
-    primary: blueGrey,
-    secondary: indigo,
+    primary: {
+      light: '#5c6b7d',
+      main: '#34465d',
+      dark: '#243141',
+      contrastText: '#fff',
+    },
   },
   typography: {
     useNextVariants: true,

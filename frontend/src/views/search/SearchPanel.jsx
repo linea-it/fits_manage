@@ -9,6 +9,10 @@ import ResultGrid from './ResultGrid'
 import SearchForm from './SearchForm'
 import ExposureDetail from 'views/exposure/Detail';
 import Aladin from 'components/Aladin/Aladin';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import AppBar from '@material-ui/core/AppBar';
+
 
 import SearchApi from 'api/Search'
 
@@ -17,6 +21,7 @@ const styles = theme => ({})
 class SearchPanel extends Component {
 
   state = {
+    tabIdx: 0,
     data: [],
     showExposureDetail: false,
     exposureId: null,
@@ -73,7 +78,10 @@ class SearchPanel extends Component {
       data: exposures,
     });
   }
-
+  handleChange = (event, value) => {
+    this.setState({ tabIdx: value });
+  };
+  
   handleSearch = (fields) => {
     console.log("handleSearch: ", fields)
 
@@ -108,8 +116,8 @@ class SearchPanel extends Component {
   }
 
   render() {
-
-    const { data, showExposureDetail, exposureId, telescopes, instruments, bands, exposureTimes } = this.state
+    // const { classes }  = this.props;
+    const { data, showExposureDetail, exposureId, telescopes, instruments, bands, exposureTimes, tabIdx } = this.state
 
     console.log("Data: ", data)
 
@@ -131,11 +139,19 @@ class SearchPanel extends Component {
             </Card>
           </Grid>
           <Grid item xs={12} sm={12} lg={12}>
-            <Card>
+          <AppBar position="static">
+            <Tabs value={tabIdx} onChange={this.handleChange}>
+              <Tab label="Item One" />
+              <Tab label="Item Two" />
+            </Tabs>
+          </AppBar>
+          {tabIdx === 0 && <div><ResultGrid rows={data} onDetail={this.handleDetail}/></div>}
+          {tabIdx === 1 && <div><p>Item Two</p></div>}
+            {/* <Card>
               <CardContent>
                 <ResultGrid rows={data} onDetail={this.handleDetail}/>
               </CardContent>
-            </Card>
+            </Card> */}
           </Grid>
         </Grid>
         <ExposureDetail open={showExposureDetail} exposureId={exposureId} onClose={this.handleCloseDetail} />
