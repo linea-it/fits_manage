@@ -39,7 +39,7 @@ class SearchForm extends Component {
     targetList: '',
     telescope: 'any',
     instrument: 'any',
-    exposureTime: 'any',
+    exposureTime: '',
     band: 'any',
     startDate: '',
     endDate: '',
@@ -144,35 +144,6 @@ class SearchForm extends Component {
                 })}
               </Select>
             </FormControl>
-            {/* <TextField
-              id="exposureTime"
-              label="Number"
-              value={this.state.exposureTime}
-              onChange={this.handleChange('exposureTime')}
-              type="number"
-              className={classes.textField}
-              fullWidth
-              margin="normal"
-            /> */}
-            <FormControl className={classes.textField} margin="normal" fullWidth>
-              <InputLabel htmlFor="exposureTime">Exposure Time (gt)</InputLabel>
-              <Select
-                native
-                value={this.state.exposureTime}
-                onChange={this.handleChange('exposureTime')}
-                inputProps={{
-                  name: 'exposureTime',
-                  id: 'exposureTime',
-                }}
-              >
-                <option value="any">Any</option>
-                {exposureTimes.map((e, i) => {
-                  return (
-                    <option key={i} value={e}>{e}</option>
-                  )
-                })}
-              </Select>
-            </FormControl>
             <FormControl className={classes.textField} margin="normal" fullWidth>
               <InputLabel htmlFor="band">Filter</InputLabel>
               <Select
@@ -192,6 +163,17 @@ class SearchForm extends Component {
                 })}
               </Select>
             </FormControl>
+            <TextField
+              id="exposureTime"
+              label="Exposure Time (s)"
+              value={this.state.exposureTime}
+              onChange={this.handleChange('exposureTime')}
+              type="number"
+              className={classes.textField}
+              fullWidth
+              margin="normal"
+              helperText="time in seconds, greater than or equal to."
+            />            
           </Grid>
           <Grid item xs={6} sm={6} lg={6} >
             <Card className={classes.card} elevation={2}>

@@ -18,7 +18,7 @@ class ExposureNode(DjangoObjectType):
             'telescope': ['iexact'],
             'instrument': ['iexact'],
             'band': ['iexact'],
-            'exposure_time':['gt'],
+            'exposure_time':['gte'],
             'observer': ['iexact', 'icontains', 'istartswith'],
         }
 
