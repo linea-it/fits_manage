@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import 'typeface-roboto';
 import blueGrey from '@material-ui/core/colors/blueGrey';
-import indigo from '@material-ui/core/colors/indigo';
+import pink from '@material-ui/core/colors/pink';
 
 import { Router, Route, Switch } from 'react-router-dom';
 import history from './history';
@@ -13,7 +13,7 @@ const theme = createMuiTheme({
     // type: 'dark',
     type: 'light',
     primary: blueGrey,
-    secondary: indigo,
+    secondary: pink,
   },
   typography: {
     useNextVariants: true,

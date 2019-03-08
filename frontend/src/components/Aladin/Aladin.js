@@ -121,7 +121,7 @@ class Aladin extends Component {
 
       var catalog = this.libA.catalog({
         name: 'Exposures',
-        sourceSize: 18,
+        sourceSize: 14,
         color: '#1DFF00',
       });
 
