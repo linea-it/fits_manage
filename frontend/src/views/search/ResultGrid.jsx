@@ -105,7 +105,7 @@ class ResultGrid extends Component {
     if (rowData !== null) {
 
       return (
-        <IconButton variant="contained" className={classes.button} onClick={() => this.onView(rowData)}  >
+        <IconButton size="small" variant="contained" className={classes.button} onClick={() => this.onView(rowData)}  >
           <ZoomIn />
         </IconButton>
       );
@@ -127,7 +127,7 @@ class ResultGrid extends Component {
       }
 
       return (
-        <IconButton variant="contained" onClick={() => this.props.handleAdd(rowData)} {...btnProps}>
+        <IconButton size="small" variant="contained" onClick={() => this.props.handleAdd(rowData)} {...btnProps}>
           <GetAppIcon />
         </IconButton>
       );

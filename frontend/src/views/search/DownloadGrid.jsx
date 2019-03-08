@@ -74,7 +74,7 @@ class DownloadGrid extends Component {
 
     if (rowData !== null) {
       return (
-        <IconButton variant="contained" className={classes.button} onClick={()=>this.props.handleRemove(rowData)}>
+        <IconButton  size="small" variant="contained" className={classes.button} onClick={()=>this.props.handleRemove(rowData)}>
           <Delete />
         </IconButton>
       );
