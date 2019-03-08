@@ -1,4 +1,4 @@
-import lokka, { Lokka } from 'lokka';
+import { Lokka } from 'lokka';
 import Transport from 'lokka-transport-http';
 
 // console.log("REACT_APP_API: ", process.env.REACT_APP_API)

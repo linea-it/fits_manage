@@ -2,15 +2,14 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
-import Paper from '@material-ui/core/Paper';
+import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
-import { forOwn, isEmpty } from 'lodash'
-import ResultGrid from './ResultGrid'
-import SearchForm from './SearchForm'
+import ResultGrid from './ResultGrid';
+import SearchForm from './SearchForm';
 import ExposureDetail from 'views/exposure/Detail';
 import Aladin from 'components/Aladin/Aladin';
 
-import SearchApi from 'api/Search'
+import SearchApi from 'api/Search';
 
 const styles = theme => ({})
 
@@ -31,7 +30,7 @@ class SearchPanel extends Component {
       band: "",
       exposureTime: 0
     },
-
+    exposureCount: 0,
     selected: {}
   }
 
@@ -55,11 +54,15 @@ class SearchPanel extends Component {
     const dexposureTimes = await SearchApi.getExposureTimes();
     const exposureTimes = dexposureTimes.exposureTimes;
 
+    const dexposureCount = await SearchApi.getExposureCount();
+    const exposureCount = dexposureCount.exposureCount;
+
     this.setState({
       telescopes: telescopes,
       instruments: instruments,
       bands: bands,
-      exposureTimes: exposureTimes
+      exposureTimes: exposureTimes,
+      exposureCount: exposureCount,
     }, () => this.loadExposures())
 
   }
@@ -79,7 +82,7 @@ class SearchPanel extends Component {
   handleSearch = (fields) => {
     this.setState({
       search: fields,
-    }, ()=> {this.loadExposures()})
+    }, () => { this.loadExposures() })
   }
 
   handleDetail = rowData => {
@@ -97,41 +100,40 @@ class SearchPanel extends Component {
   }
 
   handleSelection = selected => {
-    this.setState({selected: selected})
+    this.setState({ selected: selected })
   }
 
   render() {
 
-    const { data, showExposureDetail, exposureId, telescopes, instruments, bands, exposureTimes, selected } = this.state
-
-    console.log("Data: ", data)
+    const { data, showExposureDetail, exposureId, telescopes, instruments, bands, selected, exposureCount } = this.state
 
     var position = [];
     if (selected) {
-      position = [selected.raDeg,  selected.decDeg];
+      position = [selected.raDeg, selected.decDeg];
     }
 
     return (
       <div>
         <Grid container spacing={24} >
-          <Grid item xs={12} sm={12} lg={6} xl={4} >    
+          <Grid item xs={12} sm={12} lg={6} xl={4} >
             <Card>
               <CardContent>
-              <SearchForm handleSearch={this.handleSearch} telescopes={telescopes} instruments={instruments} bands={bands} exposureTimes={exposureTimes}/>
+                <SearchForm handleSearch={this.handleSearch} telescopes={telescopes} instruments={instruments} bands={bands} />
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={12} lg={6} xl={8}>    
+          <Grid item xs={12} sm={12} lg={6} xl={8}>
             <Card>
               <CardContent>
-              <Aladin exposures={data} desfootprint={false} position={position}/>
+                <Aladin exposures={data} desfootprint={false} position={position} />
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={12} sm={12} lg={12}>
             <Card>
+              <CardHeader subheader={`Available Exposures: ${exposureCount}`} />
               <CardContent>
-                <ResultGrid rows={data} onDetail={this.handleDetail} handleSelection={this.handleSelection}/>
+                <ResultGrid rows={data} onDetail={this.handleDetail} handleSelection={this.handleSelection} />
               </CardContent>
             </Card>
           </Grid>

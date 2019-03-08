@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  Grid, Table, TableHeaderRow,
+  Grid, TableHeaderRow,
   Toolbar, TableColumnResizing,
   SearchPanel, VirtualTable
 } from '@devexpress/dx-react-grid-material-ui';

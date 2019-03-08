@@ -3,11 +3,12 @@ import { withStyles } from '@material-ui/core/styles';
 import {
   Grid, Table, TableHeaderRow, ColumnChooser,
   TableColumnVisibility, Toolbar, TableColumnResizing,
-  TableSelection,
+  TableSelection, PagingPanel,
 } from '@devexpress/dx-react-grid-material-ui';
 import {
   SortingState, IntegratedSorting,
-  DataTypeProvider, SelectionState
+  DataTypeProvider, SelectionState,
+  PagingState, IntegratedPaging,
 } from '@devexpress/dx-react-grid';
 import moment from 'moment';
 import filesize from 'filesize';
@@ -133,17 +134,14 @@ class ResultGrid extends Component {
       selection, selectedRow,
     }, this.props.handleSelection(selectedRow))
   }
- 
+
   render() {
-
-    console.log(this.props)
-
     const { rows } = this.props;
     const {
       columns,
       defaultColumnWidths,
       tableColumnExtensions,
-      selection
+      selection,
     } = this.state;
 
 
@@ -165,6 +163,7 @@ class ResultGrid extends Component {
         <DateTypeProvider
             for={['dateObs']}
           />
+
         <SizeTypeProvider
           for={['fileSize']}
           />
@@ -174,12 +173,18 @@ class ResultGrid extends Component {
             onSelectionChange={this.changeSelection}
           />
 
+        <PagingState
+            defaultCurrentPage={0}
+            pageSize={25}
+          />
+        <IntegratedPaging />
+
         <Table columnExtensions={tableColumnExtensions}/>
         <TableColumnResizing defaultColumnWidths={defaultColumnWidths} />
         <TableHeaderRow showSortingControls />
         <TableColumnVisibility />
         <TableSelection highlightRow={true} selectByRowClick={true} showSelectionColumn={false} />
-
+        <PagingPanel />
         <Toolbar />
         <ColumnChooser />
       </Grid>

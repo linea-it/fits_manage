@@ -17,10 +17,7 @@ export default class SearchApi {
       instrument = instrument === "any" ? '' : instrument;
       band = band === "any" ? '' : band;
       exposureTime = exposureTime === '' ? 0 : exposureTime;
-      // allExposures(first:20) {
-      // allExposures(filename_Icontains: "jup_4o2_01557", first:20) {
-      //  TODO: Filtro por exposureTime, no backend deve ser um filtro expecifico.
-      //exposureTime_Gt: ${exposureTime},
+
       const exposures = await Client.query(`
         {
           exposures(
@@ -30,7 +27,7 @@ export default class SearchApi {
             band_Iexact: "${band}",
             observer_Icontains: "${observer}",
             exposureTime_Gte: ${exposureTime},
-            first:20) {
+            first:100) {
             edges {
               node {
                 id
@@ -135,4 +132,17 @@ export default class SearchApi {
       return null;
     }
   }  
+
+  static async getExposureCount() {
+    try {
+      const exposureCount = await Client.query(`
+      {
+        exposureCount
+      }
+      `);
+      return exposureCount;
+    } catch (e) {
+      return null;
+    }
+  }
 }

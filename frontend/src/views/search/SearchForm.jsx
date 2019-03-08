@@ -49,19 +49,12 @@ class SearchForm extends Component {
     this.setState({ [name]: event.target.value });
   };
 
-  // catchReturn = event => {
-  //   if (event.key === 'Enter') {
-  //     this.handleSearch()
-  //     event.preventDefault();
-  //   }
-  // }
-
   handleSearch = () => {
     this.props.handleSearch(this.state)
   }
 
   render() {
-    const { classes, telescopes, instruments, bands, exposureTimes } = this.props;
+    const { classes, telescopes, instruments, bands } = this.props;
 
     return (
       <form className={classes.container} noValidate autoComplete="off">
@@ -184,7 +177,7 @@ class SearchForm extends Component {
                 <TextField
                   name="startDate"
                   label="Start Date"
-                  type="datetime-local"
+                  type="date"
                   value={this.state.startDate}
                   onChange={this.handleChange('startDate')}
                   className={classes.textField}
@@ -197,7 +190,7 @@ class SearchForm extends Component {
                 <TextField
                   name="endDate"
                   label="End Date"
-                  type="datetime-local"
+                  type="date"
                   value={this.state.endDate}
                   onChange={this.handleChange('endDate')}
                   className={classes.textField}
@@ -263,7 +256,6 @@ SearchForm.propTypes = {
   telescopes: PropTypes.array.isRequired,
   instruments: PropTypes.array.isRequired,
   bands: PropTypes.array.isRequired,
-  exposureTimes: PropTypes.array.isRequired,
 };
 
 export default withStyles(styles)(SearchForm);
