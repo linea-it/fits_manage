@@ -115,8 +115,6 @@ class Aladin extends Component {
   }
 
   plotExposures = (exposures = [], name = "Exposures") => {
-    console.log('plotExposures:', exposures)
-    // const aladin = this.aladin;
 
     this.aladin.removeLayers()
     if (exposures && exposures.length > 0) {
