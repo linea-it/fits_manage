@@ -175,8 +175,8 @@ class ResultGrid extends Component {
     rows.map(row => {
       if (row.haveHeaders) {
         row.detail = this.renderButtonView(row);
-        row.btnDownload = this.renderButtonDownload(row);
       }
+      row.btnDownload = this.renderButtonDownload(row);
       return row;
     })
 
