@@ -53,7 +53,7 @@ class DownloadGrid extends Component {
       ],
       defaultColumnWidths: [
         { columnName: 'filename', width: 340 },
-        { columnName: 'fileSize', width: 80 },
+        { columnName: 'fileSize', width: 200 },
         { columnName: 'btnRemove', width: 100 },
       ],
       tableColumnExtensions: [
