@@ -5,6 +5,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import logoLinea from 'assets/img/linea-logo-mini.png';
+import { Link } from 'react-router-dom';
 
 
 const styles = theme => ({
@@ -22,23 +23,12 @@ const styles = theme => ({
   appBar: {
     top: 'auto',
     bottom: 0,
-    height: '6vh',
 },
   });
 
 function Footer(props) {
   const { classes, location, routes } = props;
 
-//   function getTitle() {
-//     var title;
-//     routes.map((prop, key) => {
-//       if (prop.path === location.pathname) {
-//         title = prop.appbarName;
-//       }
-//       return null;
-//     });
-//     return title;
-//   }
   return (
     <AppBar position="static" className={classes.appBar}>
        <Toolbar>
@@ -49,9 +39,10 @@ function Footer(props) {
             >
               Developer Portal Instance
             </Typography>
-            <Typography variant="h6" color="inherit">
+            <Typography variant="h6" target="_blank" color="inherit">
               Powered by LIneA
             </Typography>
+            <a href={`http://www.linea.gov.br/`}>
             <figure>
               <img
                 alt="Contemplative Reptile"
@@ -59,6 +50,7 @@ function Footer(props) {
                 title="Contemplative Reptile"
               />
             </figure>
+            </a>
       </Toolbar>
     </AppBar>
   );
