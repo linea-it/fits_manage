@@ -47,6 +47,7 @@ export default class SearchApi {
                 haveHeaders
               }
             }
+            totalCount
           } 
         }
       `);

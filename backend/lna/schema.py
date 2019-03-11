@@ -1,17 +1,26 @@
 
 import graphene
 
-from graphene import Node
+from graphene import Node, Connection
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType
-
 from lna.models import Exposure, Header
 
+
+class ExposureConnection(Connection):
+    total_count = graphene.String()
+
+    class Meta:
+        abstract = True
+
+    def resolve_total_count(self, info):
+        return self.length
 
 class ExposureNode(DjangoObjectType):
     class Meta:
         model = Exposure
         interfaces = (Node, )
+        connection_class = ExposureConnection
         filter_fields = {
             'filename': ['iexact', 'icontains', 'istartswith'],
             'target': ['iexact', 'icontains', 'istartswith'],
@@ -64,35 +73,3 @@ class Query(object):
     def resolve_exposure_count(self, info):
         return Exposure.objects.count()
 
-
-    # all_telescopes = Node.Field(TelescopeNode)
-
-
-    # def resolve_all_exposures(self, info, **kwargs):
-    #     return Exposure.objects.all()
-
-    # def resolve_all_headers(self, info, **kwargs):
-    #     return Header.objects.select_related('exposure').all()
-
-
-#  Exemplo de querys 
-# query all_exposures {
-# 	allExposures(target_Icontains: "mali", first:2) {
-# 	  edges {
-# 	    node {
-# 	      id
-#         filename
-#         target
-# 	    }
-# 	  }
-# 	} 
-# }
-
-
-# query get_exposure_by_id {
-#   exposure (id:"RXhwb3N1cmVOb2RlOjgy"){
-#     id
-#     filename
-#     target
-#   }
-# }
