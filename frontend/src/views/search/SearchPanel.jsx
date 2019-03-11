@@ -33,6 +33,7 @@ const styles = theme => ({
 class SearchPanel extends Component {
 
   state = {
+    tabIdx: 0,
     data: [],
     showExposureDetail: false,
     exposureId: null,
@@ -97,7 +98,10 @@ class SearchPanel extends Component {
       data: exposures,
     });
   }
-
+  handleChange = (event, value) => {
+    this.setState({ tabIdx: value });
+  };
+  
   handleSearch = (fields) => {
     this.setState({
       search: fields,
