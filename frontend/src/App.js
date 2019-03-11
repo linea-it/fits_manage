@@ -10,18 +10,17 @@ import Home from 'views/Home/'
 
 const theme = createMuiTheme({
   palette: {
-    // type: 'dark',
-    type: 'light',
-    primary: blueGrey,
+    primary: {
+      light: '#5c6b7d',
+      main: '#34465d',
+      dark: '#243141',
+      contrastText: '#fff',
+    },
     secondary: pink,
   },
   typography: {
     useNextVariants: true,
-
-    // successColor: "#4caf50",
-    // dangerColor: "#f44336",
   },
-
 });
 
 class App extends Component {

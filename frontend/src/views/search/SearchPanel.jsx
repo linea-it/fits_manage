@@ -33,6 +33,7 @@ const styles = theme => ({
 class SearchPanel extends Component {
 
   state = {
+    tabIdx: 0,
     data: [],
     showExposureDetail: false,
     exposureId: null,
@@ -73,15 +74,15 @@ class SearchPanel extends Component {
     const dexposureTimes = await SearchApi.getExposureTimes();
     const exposureTimes = dexposureTimes.exposureTimes;
 
-    const dexposureCount = await SearchApi.getExposureCount();
-    const exposureCount = dexposureCount.exposureCount;
+    // const dexposureCount = await SearchApi.getExposureCount();
+    // const exposureCount = dexposureCount.exposureCount;
 
     this.setState({
       telescopes: telescopes,
       instruments: instruments,
       bands: bands,
       exposureTimes: exposureTimes,
-      exposureCount: exposureCount,
+      // exposureCount: exposureCount,
     }, () => this.loadExposures())
 
   }
@@ -92,12 +93,17 @@ class SearchPanel extends Component {
 
     const dexposures = await SearchApi.getAllExposures(search);
     const exposures = dexposures.exposures.edges.map(edge => edge.node)
+    const exposureCount = dexposures.exposures.totalCount;
 
     this.setState({
       data: exposures,
+      exposureCount: exposureCount
     });
   }
-
+  handleChange = (event, value) => {
+    this.setState({ tabIdx: value });
+  };
+  
   handleSearch = (fields) => {
     this.setState({
       search: fields,
@@ -172,7 +178,7 @@ class SearchPanel extends Component {
     const { data, exposureCount, toDownload } = this.state
     return (
       <Card>
-        <CardHeader subheader={`Available Exposures: ${exposureCount}`} />
+        <CardHeader subheader={`Results: ${exposureCount}`} />
         <CardContent>
           <ResultGrid rows={data} onDetail={this.handleDetail} handleSelection={this.handleSelection} handleAdd={this.handleAdd} toDownload={toDownload} />
         </CardContent>

@@ -24,7 +24,7 @@ cp env_template .env
 
 ### Arquivo de Conf do NGNIX
 ```
-cd nginx/ && ln -s development.conf default.conf && cd ..
+cd frontend/nginx/ && ln -s development.conf default.conf && cd ..
 ```
 
 
