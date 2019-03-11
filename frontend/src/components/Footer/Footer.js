@@ -27,7 +27,7 @@ const styles = theme => ({
   });
 
 function Footer(props) {
-  const { classes, location, routes } = props;
+  const { classes } = props;
 
   return (
     <AppBar position="static" className={classes.appBar}>
@@ -37,7 +37,7 @@ function Footer(props) {
               color="inherit"
               className={classes.grow}
             >
-              Developer Portal Instance
+              
             </Typography>
             <Typography variant="h6" target="_blank" color="inherit">
               Powered by LIneA
@@ -45,9 +45,9 @@ function Footer(props) {
             <a href={`http://www.linea.gov.br/`}>
             <figure>
               <img
-                alt="Contemplative Reptile"
+                alt=""
                 src={logoLinea}
-                title="Contemplative Reptile"
+                title=""
               />
             </figure>
             </a>
@@ -58,7 +58,7 @@ function Footer(props) {
 
 Footer.propTypes = {
   classes: PropTypes.object.isRequired,
-  routes: PropTypes.array.isRequired,
+
 };
 
 export default withStyles(styles)(Footer);

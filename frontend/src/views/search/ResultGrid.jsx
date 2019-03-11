@@ -3,16 +3,20 @@ import { withStyles } from '@material-ui/core/styles';
 import {
   Grid, Table, TableHeaderRow, ColumnChooser,
   TableColumnVisibility, Toolbar, TableColumnResizing,
+  TableSelection, PagingPanel,
 } from '@devexpress/dx-react-grid-material-ui';
 import {
   SortingState, IntegratedSorting,
-  DataTypeProvider,
+  DataTypeProvider, SelectionState,
+  PagingState, IntegratedPaging,
 } from '@devexpress/dx-react-grid';
 import moment from 'moment';
 import filesize from 'filesize';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import ZoomIn from '@material-ui/icons/ZoomIn';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import PropTypes from 'prop-types';
+import { findIndex } from 'lodash';
 
 const DateFormatter = ({ value }) => `${moment(value).locale('en').format("L LTS")}`;
 
@@ -47,6 +51,7 @@ class ResultGrid extends Component {
     return {
       columns: [
         { name: 'detail', title: ' ' },
+        { name: 'btnDownload', title: 'Download' },
         { name: 'filename', title: 'Filename' },
         { name: 'target', title: 'Target' },
         { name: 'ra', title: 'RA' },
@@ -61,6 +66,7 @@ class ResultGrid extends Component {
       ],
       defaultColumnWidths: [
         { columnName: 'detail', width: 100 },
+        { columnName: 'btnDownload', width: 100 },
         { columnName: 'filename', width: 220 },
         { columnName: 'target', width: 120 },
         { columnName: 'ra', width: 80 },
@@ -75,31 +81,54 @@ class ResultGrid extends Component {
       ],
       tableColumnExtensions: [
         { columnName: 'detail', align: 'center' },
-        { columnName: 'filename', align: 'left'  },
-        { columnName: 'target', align: 'left'  },
+        { columnName: 'btnDownload', align: 'center' },
+        { columnName: 'filename', align: 'left' },
+        { columnName: 'target', align: 'left' },
         { columnName: 'ra', align: 'center' },
         { columnName: 'dec', align: 'center' },
-        { columnName: 'dateObs', align: 'left'  },
+        { columnName: 'dateObs', align: 'left' },
         { columnName: 'band', align: 'center' },
         { columnName: 'exposureTime', align: 'center' },
-        { columnName: 'telescope', align: 'left'  },
-        { columnName: 'instrument', align: 'left'  },
-        { columnName: 'observer', align: 'left'  },
+        { columnName: 'telescope', align: 'left' },
+        { columnName: 'instrument', align: 'left' },
+        { columnName: 'observer', align: 'left' },
         { columnName: 'fileSize', align: 'center' },
       ],
-
       sorting: [{ columnName: 'dateObs', direction: 'asc' }],
       loading: false,
+      selection: [],
     }
   }
 
   renderButtonView = rowData => {
-    const {classes} = this.props; 
-
+    const { classes } = this.props;
     if (rowData !== null) {
+
       return (
-        <IconButton variant="contained" className={classes.button} onClick={()=>this.onView(rowData)}>
+        <IconButton size="small" variant="contained" className={classes.button} onClick={() => this.onView(rowData)}  >
           <ZoomIn />
+        </IconButton>
+      );
+    }
+
+    return null;
+  };
+
+  renderButtonDownload = rowData => {
+    const { toDownload } = this.props;
+    if (rowData !== null) {
+
+      var btnProps = {};
+
+      if (findIndex(toDownload, function (el) {
+        return el.filename === rowData.filename;
+      }) !== -1) {
+        btnProps.color = "secondary";
+      }
+
+      return (
+        <IconButton size="small" variant="contained" onClick={() => this.props.handleAdd(rowData)} {...btnProps}>
+          <GetAppIcon />
         </IconButton>
       );
     }
@@ -111,20 +140,43 @@ class ResultGrid extends Component {
     this.props.onDetail(rowData);
   }
 
-  render() {
+  changeSelection = selection => {
+    // Neste caso a selecao e para uma linha apenas, 
+    var selected_id, selectedRow;
+    if (selection.length > 0) {
+      // comparar a selecao atual com a anterior para descobrir qual
+      // linha foi selecionado por ultimo
+      let diff = selection.filter(x => !this.state.selection.includes(x));
 
+      selection = diff
+      selected_id = diff[0]
+      selectedRow = this.props.rows[selected_id];
+
+    } else {
+      selection = [];
+      selectedRow = null;
+    }
+
+    this.setState({
+      selection, selectedRow,
+    }, this.props.handleSelection(selectedRow))
+  }
+
+
+  render() {
     const { rows } = this.props;
     const {
       columns,
       defaultColumnWidths,
       tableColumnExtensions,
+      selection,
     } = this.state;
-
 
     rows.map(row => {
       if (row.haveHeaders) {
         row.detail = this.renderButtonView(row);
-      }      
+      }
+      row.btnDownload = this.renderButtonDownload(row);
       return row;
     })
 
@@ -137,21 +189,42 @@ class ResultGrid extends Component {
         <IntegratedSorting />
 
         <DateTypeProvider
-            for={['dateObs']}
-          />
+          for={['dateObs']}
+        />
+
         <SizeTypeProvider
           for={['fileSize']}
-          />
+        />
 
-        <Table columnExtensions={tableColumnExtensions}/>
+        <SelectionState
+          selection={selection}
+          onSelectionChange={this.changeSelection}
+        />
+
+        <PagingState
+          defaultCurrentPage={0}
+          pageSize={25}
+        />
+        <IntegratedPaging />
+
+        <Table columnExtensions={tableColumnExtensions} />
         <TableColumnResizing defaultColumnWidths={defaultColumnWidths} />
         <TableHeaderRow showSortingControls />
         <TableColumnVisibility />
-
+        <TableSelection highlightRow={true} selectByRowClick={true} showSelectionColumn={false} />
+        <PagingPanel />
         <Toolbar />
         <ColumnChooser />
       </Grid>
     );
   }
 }
+
+ResultGrid.propTypes = {
+  classes: PropTypes.object.isRequired,
+  rows: PropTypes.array.isRequired,
+  handleSelection: PropTypes.func.isRequired,
+  handleAdd: PropTypes.func.isRequired,
+  toDownload: PropTypes.array,
+};
 export default withStyles(styles)(ResultGrid);

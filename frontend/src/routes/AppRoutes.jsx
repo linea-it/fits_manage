@@ -4,7 +4,7 @@ import SearchPanel from 'views/search/SearchPanel';
 const AppRoutes = [
   {
     path: "/search",
-    appbarName: "LNA - Search",
+    appbarName: "LNA Archive",
     component: SearchPanel
   },
   { 

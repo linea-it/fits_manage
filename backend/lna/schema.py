@@ -47,6 +47,7 @@ class Query(object):
     instruments = graphene.List(graphene.String)
     bands = graphene.List(graphene.String)
     exposure_times = graphene.List(graphene.Float)
+    exposure_count = graphene.Int()
 
     def resolve_telescopes(self, info):
         return [exposure.telescope for exposure in Exposure.objects.distinct('telescope').order_by('telescope')]
@@ -60,6 +61,8 @@ class Query(object):
     def resolve_exposure_times(self, info):
         return [exposure.exposure_time for exposure in Exposure.objects.distinct('exposure_time').order_by('exposure_time')]
 
+    def resolve_exposure_count(self, info):
+        return Exposure.objects.count()
 
 
     # all_telescopes = Node.Field(TelescopeNode)

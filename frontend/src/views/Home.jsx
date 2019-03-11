@@ -7,8 +7,6 @@ import { Switch, Route, Redirect } from "react-router-dom";
 
 import MainAppBar from 'components/Header/MainAppBar';
 import Footer from '../components/Footer/Footer';
-import Tabs from '../components/Tabs/Tabs';
-
 
 // import Sidebar from './Sidebar';
 
@@ -22,7 +20,7 @@ const styles = theme => ({
   content: {
     flexGrow: 1,
     padding: theme.spacing.unit * 3,
-    height: '110vh',
+    // height: '110vh',
   },
   appBarSpacer: theme.mixins.toolbar,
 });
@@ -55,17 +53,14 @@ class Home extends Component {
             routes={AppRoutes}
             {...rest}
         />
-        <Tabs>
-
-        </Tabs>
-
         <div className={classes.root}>
           <main className={classes.content}>
             {this.switchRoutes()}
           </main>
+          
         </div> 
+
         <Footer/> 
-      
       </React.Fragment>
     );
   }
