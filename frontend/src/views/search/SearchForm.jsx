@@ -32,22 +32,30 @@ const styles = theme => ({
 
 class SearchForm extends Component {
 
-  state = {
-    piName: '',
-    observer: '',
-    target: '',
-    targetList: '',
-    telescope: 'any',
-    instrument: 'any',
-    exposureTime: '',
-    band: 'any',
-    startDate: '',
-    endDate: '',
+  state = this.initialState;
+
+  get initialState() {
+    return {
+      piName: '',
+      observer: '',
+      target: '',
+      targetList: '',
+      telescope: 'any',
+      instrument: 'any',
+      exposureTime: '',
+      band: 'any',
+      startDate: '',
+      endDate: '',
+    };
   }
 
   handleChange = name => event => {
     this.setState({ [name]: event.target.value });
   };
+
+  handleClear = () => {
+    this.setState(this.initialState, ()=> this.props.handleClear());
+  }
 
   handleSearch = () => {
     this.props.handleSearch(this.state)
@@ -166,7 +174,7 @@ class SearchForm extends Component {
               fullWidth
               margin="normal"
               helperText="time in seconds, greater than or equal to."
-            />            
+            />
           </Grid>
           <Grid item xs={6} sm={6} lg={6} >
             <Card className={classes.card} elevation={2}>
@@ -236,14 +244,17 @@ class SearchForm extends Component {
                   className={classes.textField}
                   fullWidth
                   margin="normal"
-                />                
+                />
               </CardContent>
             </Card>
           </Grid>
           <Grid container justify="flex-end" alignContent="flex-end">
-            <Button color="primary" variant="contained"  onClick={this.handleSearch}>
+            <Button color="primary" variant="outlined" onClick={this.handleClear}>
+              Clear
+            </Button>
+            <Button color="primary" variant="contained" onClick={this.handleSearch}>
               Ok
-            </Button>          
+            </Button>
           </Grid>
         </Grid>
       </form>
@@ -253,6 +264,7 @@ class SearchForm extends Component {
 SearchForm.propTypes = {
   classes: PropTypes.object.isRequired,
   handleSearch: PropTypes.func.isRequired,
+  handleClear: PropTypes.func.isRequired,
   telescopes: PropTypes.array.isRequired,
   instruments: PropTypes.array.isRequired,
   bands: PropTypes.array.isRequired,
