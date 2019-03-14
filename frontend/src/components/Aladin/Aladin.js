@@ -175,6 +175,8 @@ class Aladin extends Component {
 
     if (this.aladin) {
 
+      this.aladin.removeLayers()
+      
       this.plotExposures(this.props.exposures);
      
       if (position && position.length > 0) {

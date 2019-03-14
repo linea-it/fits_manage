@@ -110,6 +110,17 @@ class SearchPanel extends Component {
     }, () => { this.loadExposures() })
   }
 
+  handleClear = () => {
+    this.setState({
+      data: [],
+      showExposureDetail: false,
+      exposureId: null,
+      search: {},
+      exposureCount: 0,
+      selected: {},
+    })
+  }
+
   handleDetail = rowData => {
     this.setState({
       exposureId: rowData.id,
@@ -234,7 +245,7 @@ class SearchPanel extends Component {
           <Grid item xs={12} sm={12} lg={6} xl={4} >
             <Card className={classes.card}>
               <CardContent>
-                <SearchForm handleSearch={this.handleSearch} telescopes={telescopes} instruments={instruments} bands={bands} />
+                <SearchForm handleSearch={this.handleSearch} handleClear={this.handleClear} telescopes={telescopes} instruments={instruments} bands={bands} />
               </CardContent>
             </Card>
           </Grid>
