@@ -3,6 +3,13 @@ import { uniqueId } from 'lodash'
 import PropTypes from 'prop-types';
 import sizeMe from 'react-sizeme'
 import { desfootprint } from './DesFootprint';
+import { withStyles } from '@material-ui/core/styles';
+const styles = theme => ({
+  container: {
+    width: '100%',
+    height: '100%',
+  },
+})
 
 class Aladin extends Component {
   // api = new ExposureApi();
@@ -165,13 +172,13 @@ class Aladin extends Component {
 
   render() {
 
-    const { position } = this.props;
+    const { classes, position } = this.props;
 
     // Ajuste no Tamanho do container
     let { width, height } = this.props.size
-    if (height === 0) {
-      height = width / 2;
-    }
+    // if (height === 0) {
+    //   height = width / 2;
+    // }
 
     if (this.aladin) {
 
@@ -187,7 +194,8 @@ class Aladin extends Component {
 
 
     return (
-      <div id={this.id} className="aladin-container" style={{ width: width, height: height }}></div>
+      <div id={this.id} className='aladin-container' style={{ width: width, height: '100%' }}></div>
+      // <div id={this.id} className={classes.container} style={{ width: '100%', height: '100%' }}></div>
     );
   }
 }
@@ -198,5 +206,6 @@ Aladin.propTypes = {
   position: PropTypes.array,
 };
 
-export default sizeMe({ monitorHeight: true, monitorWidth: true })(Aladin);
+export default withStyles(styles)(sizeMe({ monitorHeight: true, monitorWidth: true })(Aladin));
+
 

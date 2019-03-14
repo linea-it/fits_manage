@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
+import Paper from '@material-ui/core/Paper';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
@@ -251,7 +252,7 @@ class SearchPanel extends Component {
           </Grid>
           <Grid item xs={12} sm={12} lg={6} xl={8}>
             <Card className={classes.card}>
-              <CardContent>
+              <CardContent className={classes.card}>
                 <Aladin exposures={data} desfootprint={false} position={position} />
               </CardContent>
             </Card>
