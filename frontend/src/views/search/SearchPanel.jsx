@@ -66,11 +66,11 @@ class SearchPanel extends Component {
     const dtelescopes = await SearchApi.getTelescopes();
     const telescopes = dtelescopes.telescopes;
 
-    const dinstruments = await SearchApi.getInstruments();
-    const instruments = dinstruments.instruments;
+    // const dinstruments = await SearchApi.getInstruments();
+    // const instruments = dinstruments.instruments;
 
-    const dbands = await SearchApi.getBands();
-    const bands = dbands.bands;
+    // const dbands = await SearchApi.getBands();
+    // const bands = dbands.bands;
 
     const dexposureTimes = await SearchApi.getExposureTimes();
     const exposureTimes = dexposureTimes.exposureTimes;
@@ -80,9 +80,9 @@ class SearchPanel extends Component {
 
     this.setState({
       telescopes: telescopes,
-      instruments: instruments,
-      bands: bands,
-      exposureTimes: exposureTimes,
+      // instruments: instruments,
+      // bands: bands,
+      // exposureTimes: exposureTimes,
       // exposureCount: exposureCount,
     }, () => this.loadExposures())
 
@@ -101,6 +101,45 @@ class SearchPanel extends Component {
       exposureCount: exposureCount
     });
   }
+
+  handleChangeTelescope = (telescope) => {
+    if (telescope === 'any') {
+      this.setState({
+        instruments: [],
+        bands: [],
+      })
+    }
+    this.loadInstruments(telescope)
+  }
+
+  loadInstruments = async (telescope) => {
+    const dinstruments = await SearchApi.getInstrumentsByTelescope(telescope);
+    const instruments = dinstruments.instruments;
+
+    this.setState({
+      instruments: instruments
+    })
+  }
+
+  handleChangeInstrument = (instrument) => {
+    if (instrument === 'any') {
+      this.setState({
+        bands: [],
+      })
+    }
+    this.loadBands(instrument)
+  }
+
+  loadBands = async (instrument) => {
+    const dbands = await SearchApi.getBandsByInstrument(instrument);
+    const bands = dbands.bands;
+
+    this.setState({
+      bands: bands
+    })
+  }
+
+
   handleChange = (event, value) => {
     this.setState({ tabIdx: value });
   };
@@ -186,6 +225,7 @@ class SearchPanel extends Component {
     })
   }
  
+
   renderList = () => {
     const { data, exposureCount, toDownload } = this.state
     return (
@@ -246,7 +286,14 @@ class SearchPanel extends Component {
           <Grid item xs={12} sm={12} lg={6} xl={4} >
             <Card className={classes.card}>
               <CardContent>
-                <SearchForm handleSearch={this.handleSearch} handleClear={this.handleClear} telescopes={telescopes} instruments={instruments} bands={bands} />
+                <SearchForm 
+                  handleSearch={this.handleSearch} 
+                  handleClear={this.handleClear} 
+                  handleChangeTelescope={this.handleChangeTelescope}
+                  handleChangeInstrument={this.handleChangeInstrument}
+                  telescopes={telescopes} 
+                  instruments={instruments} 
+                  bands={bands} />
               </CardContent>
             </Card>
           </Grid>

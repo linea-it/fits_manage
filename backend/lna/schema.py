@@ -53,19 +53,19 @@ class Query(object):
     exposures = DjangoFilterConnectionField(ExposureNode)
     headers = DjangoFilterConnectionField(HeaderNode)
     telescopes = graphene.List(graphene.String)
-    instruments = graphene.List(graphene.String)
-    bands = graphene.List(graphene.String)
+    instruments = graphene.List(graphene.String, telescope=graphene.String())
+    bands = graphene.List(graphene.String, instrument=graphene.String())
     exposure_times = graphene.List(graphene.Float)
     exposure_count = graphene.Int()
 
     def resolve_telescopes(self, info):
         return [exposure.telescope for exposure in Exposure.objects.distinct('telescope').order_by('telescope')]
 
-    def resolve_instruments(self, info):
-        return [exposure.instrument for exposure in Exposure.objects.distinct('instrument').order_by('instrument')]
+    def resolve_instruments(self, info, telescope=None):
+        return [exposure.instrument for exposure in Exposure.objects.filter(telescope=telescope).distinct('instrument').order_by('instrument')]
 
-    def resolve_bands(self, info):
-        return [exposure.band for exposure in Exposure.objects.distinct('band').order_by('band')]
+    def resolve_bands(self, info, instrument=None):
+        return [exposure.band for exposure in Exposure.objects.filter(instrument=instrument).distinct('band').order_by('band')]
 
     def resolve_exposure_times(self, info):
         return [exposure.exposure_time for exposure in Exposure.objects.distinct('exposure_time').order_by('exposure_time')]

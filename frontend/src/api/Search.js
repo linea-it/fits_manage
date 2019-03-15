@@ -95,11 +95,13 @@ export default class SearchApi {
     }
   }
 
-  static async getInstruments() {
+  static async getInstrumentsByTelescope(telescope) {
     try {
       const instruments = await Client.query(`
       {
-        instruments
+        instruments (
+          telescope: "${telescope}"
+        )
       }
       `);
       return instruments;
@@ -107,12 +109,15 @@ export default class SearchApi {
       return null;
     }
   }
+  
 
-  static async getBands() {
+  static async getBandsByInstrument(instrument) {
     try {
       const bands = await Client.query(`
       {
-        bands
+        bands (
+          instrument: "${instrument}"
+        ) 
       }
       `);
       return bands;
