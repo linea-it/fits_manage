@@ -50,7 +50,17 @@ class SearchForm extends Component {
   }
 
   handleChange = name => event => {
-    this.setState({ [name]: event.target.value });
+
+    const value = event.target.value;
+
+    this.setState({ [name]: value }, () => {
+      if (name === 'telescope') {
+        this.props.handleChangeTelescope(value)
+      }
+      if (name === 'instrument') {
+        this.props.handleChangeInstrument(value)
+      }
+    });
   };
 
   handleClear = () => {
@@ -136,6 +146,7 @@ class SearchForm extends Component {
                   name: 'instrument',
                   id: 'instrument',
                 }}
+                disabled={this.state.telescope === 'any' ? true : false}
               >
                 <option value="any">Any</option>
                 {instruments.map((e, i) => {
@@ -155,6 +166,7 @@ class SearchForm extends Component {
                   name: 'band',
                   id: 'band',
                 }}
+                disabled={this.state.instrument === 'any' ? true : false}
               >
                 <option value="any">Any</option>
                 {bands.map((e, i) => {
@@ -265,6 +277,8 @@ SearchForm.propTypes = {
   classes: PropTypes.object.isRequired,
   handleSearch: PropTypes.func.isRequired,
   handleClear: PropTypes.func.isRequired,
+  handleChangeTelescope: PropTypes.func.isRequired,
+  handleChangeInstrument: PropTypes.func.isRequired,
   telescopes: PropTypes.array.isRequired,
   instruments: PropTypes.array.isRequired,
   bands: PropTypes.array.isRequired,
