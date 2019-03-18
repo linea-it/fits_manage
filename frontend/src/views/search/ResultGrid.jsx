@@ -8,7 +8,7 @@ import {
 import {
   SortingState, IntegratedSorting,
   DataTypeProvider, SelectionState,
-  PagingState, IntegratedPaging,
+  PagingState, CustomPaging,
 } from '@devexpress/dx-react-grid';
 import moment from 'moment';
 import filesize from 'filesize';
@@ -97,6 +97,7 @@ class ResultGrid extends Component {
       sorting: [{ columnName: 'dateObs', direction: 'asc' }],
       loading: false,
       selection: [],
+      currentPage: 0
     }
   }
 
@@ -162,14 +163,18 @@ class ResultGrid extends Component {
     }, this.props.handleSelection(selectedRow))
   }
 
+  changeCurrentPage = (currentPage) => {
+    this.props.handleChangePage(currentPage);
+  }
 
   render() {
-    const { rows } = this.props;
+    const { rows, totalCount, pageSize } = this.props;
     const {
       columns,
       defaultColumnWidths,
       tableColumnExtensions,
       selection,
+      currentPage,
     } = this.state;
 
     rows.map(row => {
@@ -203,9 +208,13 @@ class ResultGrid extends Component {
 
         <PagingState
           defaultCurrentPage={0}
-          pageSize={25}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          onCurrentPageChange={this.changeCurrentPage}
         />
-        <IntegratedPaging />
+        <CustomPaging
+            totalCount={totalCount}
+          />
 
         <Table columnExtensions={tableColumnExtensions} />
         <TableColumnResizing defaultColumnWidths={defaultColumnWidths} />
@@ -223,6 +232,8 @@ class ResultGrid extends Component {
 ResultGrid.propTypes = {
   classes: PropTypes.object.isRequired,
   rows: PropTypes.array.isRequired,
+  totalCount: PropTypes.number.isRequired,
+  handleChangePage: PropTypes.func.isRequired,
   handleSelection: PropTypes.func.isRequired,
   handleAdd: PropTypes.func.isRequired,
   toDownload: PropTypes.array,

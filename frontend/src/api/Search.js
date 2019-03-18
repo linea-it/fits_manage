@@ -3,6 +3,31 @@ import Client from 'api/Client'
 
 export default class SearchApi {
 
+  static parseExposureFilters ({
+    target,
+    telescope,
+    instrument,
+    band,
+    exposureTime,
+    observer,}) {
+
+    telescope = telescope === "any" ? '' : telescope;
+    instrument = instrument === "any" ? '' : instrument;
+    band = band === "any" ? '' : band;
+    exposureTime = exposureTime === '' ? 0 : exposureTime;
+
+    const strFilter = `
+      target_Icontains: "${target}",
+      telescope_Iexact: "${telescope}", 
+      instrument_Iexact: "${instrument}",
+      band_Iexact: "${band}",
+      observer_Icontains: "${observer}",
+      exposureTime_Gte: ${exposureTime},
+    `;
+
+    return strFilter;
+  }
+
   static async getAllExposures({
     target,
     telescope,
@@ -10,24 +35,30 @@ export default class SearchApi {
     band,
     exposureTime,
     observer,
-  }) {
+  }, pageSize, currentPage) {
     try {
+      var strFilter = this.parseExposureFilters({
+        target,
+        telescope,
+        instrument,
+        band,
+        exposureTime,
+        observer,
+      });
+      console.log('currentPage', currentPage)
 
-      telescope = telescope === "any" ? '' : telescope;
-      instrument = instrument === "any" ? '' : instrument;
-      band = band === "any" ? '' : band;
-      exposureTime = exposureTime === '' ? 0 : exposureTime;
+      var after = "";     
+      if (currentPage) {
+        var offset = currentPage * pageSize;
+        after = window.btoa('arrayconnection:' + (offset - 1));
+      }
 
       const exposures = await Client.query(`
         {
           exposures(
-            target_Icontains: "${target}",
-            telescope_Iexact: "${telescope}", 
-            instrument_Iexact: "${instrument}",
-            band_Iexact: "${band}",
-            observer_Icontains: "${observer}",
-            exposureTime_Gte: ${exposureTime},
-            first:100) {
+            ${strFilter}
+            first:${pageSize},
+            after: "${after}") {
             edges {
               node {
                 id
@@ -51,9 +82,48 @@ export default class SearchApi {
           } 
         }
       `);
+
       return exposures;
     } catch (e) {
       return null;
+    }
+  }
+
+  static async getExposuresCount({
+    target,
+    telescope,
+    instrument,
+    band,
+    exposureTime,
+    observer,
+  }) {
+    try {
+      var strFilter = this.parseExposureFilters({
+        target,
+        telescope,
+        instrument,
+        band,
+        exposureTime,
+        observer,
+      });
+
+      const data = await Client.query(`
+        {
+          exposures(
+            ${strFilter}) {
+            pageInfo {
+              startCursor
+              endCursor
+            }
+          } 
+        }
+      `);
+
+      const temp = atob(data.exposures.pageInfo.endCursor);
+      const total = parseInt(temp.split(":")[1]);
+      return total;
+    } catch (e) {
+      return 0;
     }
   }
 
