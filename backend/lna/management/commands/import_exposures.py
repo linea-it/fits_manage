@@ -70,7 +70,7 @@ class Command(BaseCommand):
                 filename=row.filename,
                 file_path=os.path.join(row.path, row.filename),
                 defaults={
-                    'date': row.date,
+                    # 'date': row.date,
                     'date_obs': row.date_obs,
                     'target': row.object,
                     'ra_deg': self.convert_ra_sex_to_deg(row.ra),
@@ -117,17 +117,30 @@ class Command(BaseCommand):
         if not os.path.exists(file_path):
             self.stdout.write("Arquivo nao encontrado")
 
+        # filename;path;object;exposure;date-obs;ra;dec;telescop;instrume;observer;filter;file_size
+        # 'filename', 'path', 'object', 'exposure', 'date_obs', 'ra', 'dec', 'telescope', 'instrument', 'observer', 'filter', 'file_size',
         data = pd.read_csv(
             file_path,
             delimiter=';',
-            names=['filename', 'path', 'date', 'object', 'exposure', 'date_obs', 'ra',
-                   'dec', 'telescope', 'instrument', 'observer', 'filter', 'file_size', ],
-            parse_dates=['date', 'date_obs'],
+            # names=['filename', 'path', 'object', 'date', 'exposure', 'date_obs', 'ra',
+            #        'dec', 'telescope', 'instrument', 'observer', 'filter', 'file_size', ],
+            names=['filename', 'path', 'object', 'exposure', 'date_obs', 'ra', 'dec', 'telescope', 'instrument', 'observer', 'filter', 'file_size'],
+            # parse_dates=['date', 'date_obs'],
+            parse_dates=['date_obs'],
             dtype={
                 "file_size": int
             },
             skiprows=1,
             nrows=options['limit'])
 
+
+        ignore_targets = list(['flat field', 'flat', 'bias', 'teste'])
+
+
         for row in data.itertuples():
-            self.create_record(row)
+
+            target = str(row.object)
+            if target.lower() in ignore_targets:
+                self.stdout.write("Ignored: [ %s ] Filename [ %s ]" % (row.object, row.filename))
+            else:
+                self.create_record(row)

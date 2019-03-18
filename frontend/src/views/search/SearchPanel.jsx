@@ -36,6 +36,8 @@ class SearchPanel extends Component {
   state = {
     tabIdx: 0,
     data: [],
+    pageSize: 25,
+    currentPage: 0,
     showExposureDetail: false,
     exposureId: null,
     telescopes: [],
@@ -47,12 +49,14 @@ class SearchPanel extends Component {
       telescope: "",
       instrument: "",
       band: "",
-      exposureTime: 0
+      exposureTime: 0,
+      observer: ""
     },
     exposureCount: 0,
     selected: {},
     activeTab: 0,
-    toDownload: []
+    toDownload: [],
+    loading: false
   }
 
   componentDidMount() {
@@ -66,39 +70,34 @@ class SearchPanel extends Component {
     const dtelescopes = await SearchApi.getTelescopes();
     const telescopes = dtelescopes.telescopes;
 
-    // const dinstruments = await SearchApi.getInstruments();
-    // const instruments = dinstruments.instruments;
-
-    // const dbands = await SearchApi.getBands();
-    // const bands = dbands.bands;
-
-    const dexposureTimes = await SearchApi.getExposureTimes();
-    const exposureTimes = dexposureTimes.exposureTimes;
-
-    // const dexposureCount = await SearchApi.getExposureCount();
-    // const exposureCount = dexposureCount.exposureCount;
-
     this.setState({
       telescopes: telescopes,
-      // instruments: instruments,
-      // bands: bands,
-      // exposureTimes: exposureTimes,
-      // exposureCount: exposureCount,
-    }, () => this.loadExposures())
+    })
 
   }
 
-  loadExposures = async () => {
+  loadExposures = async (currentPage) => {
 
-    const { search } = this.state;
+    if (!currentPage){
+      currentPage = this.state.currentPage;
+    }
 
-    const dexposures = await SearchApi.getAllExposures(search);
+    this.setState({
+      data: [],
+      loading: true,
+    });
+
+    const { search, pageSize } = this.state;
+
+    const dexposures = await SearchApi.getAllExposures(search, pageSize, currentPage);
     const exposures = dexposures.exposures.edges.map(edge => edge.node)
-    const exposureCount = dexposures.exposures.totalCount;
+    const exposureCount = await SearchApi.getExposuresCount(search)
 
     this.setState({
       data: exposures,
-      exposureCount: exposureCount
+      exposureCount: exposureCount,
+      currentPage: currentPage,
+      loading: false,
     });
   }
 
@@ -225,14 +224,30 @@ class SearchPanel extends Component {
     })
   }
  
+  handleChangePage = (currentPage) => {
+    console.log("changeCurrentPage: ", currentPage)
+    const { pageSize } = this.state
+
+    this.loadExposures(currentPage);
+  }
 
   renderList = () => {
-    const { data, exposureCount, toDownload } = this.state
+    const { data, exposureCount, pageSize, currentPage, toDownload } = this.state
     return (
       <Card>
         <CardHeader subheader={`Results: ${exposureCount}`} />
         <CardContent>
-          <ResultGrid rows={data} onDetail={this.handleDetail} handleSelection={this.handleSelection} handleAdd={this.handleAdd} toDownload={toDownload} />
+          <ResultGrid 
+            rows={data} 
+            totalCount={exposureCount} 
+            pageSize={pageSize} 
+            currentPage={currentPage}
+            handleChangePage={this.handleChangePage}
+            onDetail={this.handleDetail} 
+            handleSelection={this.handleSelection} 
+            handleAdd={this.handleAdd} 
+            toDownload={toDownload} 
+            />
         </CardContent>
       </Card>
     )
