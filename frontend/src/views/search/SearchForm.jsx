@@ -77,7 +77,7 @@ class SearchForm extends Component {
     return (
       <form className={classes.container} noValidate autoComplete="off">
         <Grid container spacing={16}>
-          <Grid item xs={6} sm={6} lg={6} >
+          <Grid item xs={6} sm={6} md={6} lg={6} >
             <TextField
               name="piName"
               label="PI Name"
@@ -188,7 +188,7 @@ class SearchForm extends Component {
               helperText="time in seconds, greater than or equal to."
             />
           </Grid>
-          <Grid item xs={6} sm={6} lg={6} >
+          <Grid item xs={6} sm={6} md={4} lg={6} xl={6} >
             <Card className={classes.card} elevation={2}>
               <CardContent>
                 <Typography className={classes.title} color="textSecondary" gutterBottom>

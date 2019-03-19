@@ -30,7 +30,7 @@ function Footer(props) {
   const { classes } = props;
 
   return (
-    <AppBar position="static" className={classes.appBar}>
+    <AppBar position="fixed" className={classes.appBar}>
        <Toolbar>
             <Typography
               variant="h6"
