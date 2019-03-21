@@ -20,10 +20,16 @@ const styles = theme => ({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  logo: {
+    width: 30,
+    height: 30,
+    marginLeft: 0,
+  },
   appBar: {
     top: 'auto',
     bottom: 0,
-},
+  },
+
   });
 
 function Footer(props) {
@@ -40,10 +46,10 @@ function Footer(props) {
               
             </Typography>
             <Typography variant="h6" target="_blank" color="inherit">
-              Powered by LIneA
+              Powered by
             </Typography>
             <a href={`http://www.linea.gov.br/`}>
-            <figure>
+            <figure className={classes.logo}>
               <img
                 alt=""
                 src={logoLinea}

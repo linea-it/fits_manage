@@ -4,18 +4,28 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
+import CloseIcon from '@material-ui/icons/Close';
 import Dialog from '@material-ui/core/Dialog';
 
 import SearchApi from 'api/Search'
 import HeaderGrid from './HeaderGrid';
+import { IconButton } from '@material-ui/core';
 
-const styles = theme => ({})
+const styles = theme => ({
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing.unit,
+    top: theme.spacing.unit,
+    color: theme.palette.grey[500],
+  },
+})
 
 class ExposureDetail extends Component {
 
   state = {
     data: {},
-    headers: []
+    headers: [],
+    onClose: true,
   }
 
   componentDidMount() {
@@ -50,7 +60,7 @@ class ExposureDetail extends Component {
 
     const { classes, exposureId, ...other } = this.props;
 
-    const { data, headers } = this.state;
+    const { data, headers, onClose } = this.state;
 
     return (
 
@@ -60,7 +70,16 @@ class ExposureDetail extends Component {
         fullWidth={true}
         maxWidth="lg"
         {...other}>
-        <DialogTitle>{data.filename}</DialogTitle>
+        <DialogTitle
+          onClose={this.handleClose}
+        >
+        {data.filename}
+        {onClose ? (
+        <IconButton aria-label="Close" className={classes.closeButton} onClick={this.handleClose}>
+          <CloseIcon />
+        </IconButton>
+      ) : null}
+        </DialogTitle>
           <DialogContent>
             <Grid container spacing={24}>
               <Grid item xs={12} sm={12} lg={6} xl={5} >
