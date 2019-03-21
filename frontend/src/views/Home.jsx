@@ -15,6 +15,8 @@ import AppRoutes from "routes/AppRoutes";
 const styles = theme => ({
   root: {
     display: 'flex',
+    marginTop: 64,
+    marginBottom: 64,
   },
 
   content: {

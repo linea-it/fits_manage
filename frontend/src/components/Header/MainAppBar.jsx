@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 const styles = theme => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
+
   },  
   menuButton: {
     marginLeft: -12,
@@ -33,7 +34,7 @@ function MainAppBar(props) {
     return title;
   }
   return (
-    <AppBar position="static" className={classes.appBar}>
+    <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
         {/* <IconButton
           className={classes.menuButton}
