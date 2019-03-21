@@ -56,7 +56,7 @@ class SearchPanel extends Component {
     selected: {},
     activeTab: 0,
     toDownload: [],
-    loading: false
+    loading: false  
   }
 
   componentDidMount() {
@@ -232,7 +232,7 @@ class SearchPanel extends Component {
   }
 
   renderList = () => {
-    const { data, exposureCount, pageSize, currentPage, toDownload } = this.state
+    const { data, exposureCount, pageSize, currentPage, toDownload, loading } = this.state
     return (
       <Card>
         <CardHeader subheader={`Results: ${exposureCount}`} />
@@ -247,6 +247,7 @@ class SearchPanel extends Component {
             handleSelection={this.handleSelection} 
             handleAdd={this.handleAdd} 
             toDownload={toDownload} 
+            loading={loading}
             />
         </CardContent>
       </Card>

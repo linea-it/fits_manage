@@ -17,6 +17,8 @@ import ZoomIn from '@material-ui/icons/ZoomIn';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import PropTypes from 'prop-types';
 import { findIndex } from 'lodash';
+import { Paper, CircularProgress } from '@material-ui/core';
+
 
 const DateFormatter = ({ value }) => `${moment(value).locale('en').format("L LTS")}`;
 
@@ -40,6 +42,13 @@ const SizeTypeProvider = props => (
 const styles = theme => ({
   button: {
     margin: theme.spacing.unit,
+  },
+  progress: {
+    position: 'absolute',
+    top: '70%',
+    left: '50%',
+    margin: '-30px 0 0 -20px',
+    zIndex: '99',
   },
 })
 
@@ -95,7 +104,7 @@ class ResultGrid extends Component {
         { columnName: 'fileSize', align: 'center' },
       ],
       sorting: [{ columnName: 'dateObs', direction: 'asc' }],
-      loading: false,
+      loading: true,
       selection: [],
       currentPage: 0
     }
@@ -165,10 +174,13 @@ class ResultGrid extends Component {
 
   changeCurrentPage = (currentPage) => {
     this.props.handleChangePage(currentPage);
+    this.setState({
+      loading: true,
+    });
   }
 
   render() {
-    const { rows, totalCount, pageSize } = this.props;
+    const { rows, totalCount, pageSize, classes, loading } = this.props;
     const {
       columns,
       defaultColumnWidths,
@@ -176,7 +188,7 @@ class ResultGrid extends Component {
       selection,
       currentPage,
     } = this.state;
-
+     
     rows.map(row => {
       if (row.haveHeaders) {
         row.detail = this.renderButtonView(row);
@@ -186,6 +198,8 @@ class ResultGrid extends Component {
     })
 
     return (
+      <Paper style={{ position: 'relative' }}>
+
       <Grid
         columns={columns}
         rows={rows}>
@@ -222,9 +236,12 @@ class ResultGrid extends Component {
         <TableColumnVisibility />
         <TableSelection highlightRow={true} selectByRowClick={true} showSelectionColumn={false} />
         <PagingPanel />
+
         <Toolbar />
         <ColumnChooser />
       </Grid>
+      { loading &&  <CircularProgress className={classes.progress}/> }
+      </Paper>      
     );
   }
 }
