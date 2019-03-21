@@ -104,7 +104,7 @@ class ResultGrid extends Component {
         { columnName: 'fileSize', align: 'center' },
       ],
       sorting: [{ columnName: 'dateObs', direction: 'asc' }],
-      loading: true,
+      // loading: true,
       selection: [],
       currentPage: 0
     }
@@ -174,9 +174,9 @@ class ResultGrid extends Component {
 
   changeCurrentPage = (currentPage) => {
     this.props.handleChangePage(currentPage);
-    this.setState({
-      loading: true,
-    });
+    // this.setState({
+    //   loading: true,
+    // });
   }
 
   render() {

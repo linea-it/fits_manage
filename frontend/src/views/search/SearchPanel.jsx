@@ -25,7 +25,7 @@ const styles = theme => ({
   },
   rightIcon: {
     marginLeft: theme.spacing.unit,
-  },  
+  },
   card: {
     height: '100%',
   }
@@ -56,7 +56,7 @@ class SearchPanel extends Component {
     selected: {},
     activeTab: 0,
     toDownload: [],
-    loading: false  
+    loading: false
   }
 
   componentDidMount() {
@@ -78,12 +78,11 @@ class SearchPanel extends Component {
 
   loadExposures = async (currentPage) => {
 
-    if (!currentPage){
+    if (!currentPage) {
       currentPage = this.state.currentPage;
     }
 
     this.setState({
-      data: [],
       loading: true,
     });
 
@@ -142,7 +141,7 @@ class SearchPanel extends Component {
   handleChange = (event, value) => {
     this.setState({ tabIdx: value });
   };
-  
+
   handleSearch = (fields) => {
     this.setState({
       search: fields,
@@ -183,8 +182,20 @@ class SearchPanel extends Component {
   }
 
   handleAdd = (record) => {
-    var { toDownload } = this.state;
+    var { toDownload, data } = this.state;
 
+    // this.setState({
+    //   oldData: data,
+    //   data: []
+    // }, () => {
+    //   if (findIndex(toDownload, function (el) {
+    //     return el.filename === record.filename;
+    //   }) !== -1) {
+    //     this.removeFromDownload(record);
+    //   } else {
+    //     this.addToDownload(record);
+    //   }      
+    // })
     if (findIndex(toDownload, function (el) {
       return el.filename === record.filename;
     }) !== -1) {
@@ -195,23 +206,54 @@ class SearchPanel extends Component {
   }
 
   addToDownload = (record) => {
-    var { toDownload } = this.state;
+    var { toDownload, data } = this.state;
 
     toDownload.push(record);
+
     this.setState({
-      toDownload: toDownload
-    }, () => { this.loadExposures() });
+      toDownload: toDownload,
+    }, () => {
+      // this.loadExposures() 
+      this.fakeReload()
+    });
+
+    // this.setState({
+    //   toDownload: toDownload,
+    //   data: data,
+    //   oldData: [],
+    //   loading: false
+    // });    
   }
 
   removeFromDownload = (record) => {
     const { toDownload } = this.state;
 
     var rows = remove(toDownload, function (el) {
-      return el.filename !== record.filename});
+      return el.filename !== record.filename
+    });
 
     this.setState({
       toDownload: rows,
-    }, () => { this.loadExposures() });
+    }, () => {
+      this.fakeReload()
+    });
+
+  }
+
+  fakeReload = () => {
+    const { data } = this.state;
+
+    this.setState({
+      data: [],
+      oldData: data,
+      loading: true,
+    }, () => {
+      this.setState({
+        data: this.state.oldData,
+        oldData: [],
+        loading: true,
+      })
+    });
   }
 
   handleRemove = (record) => {
@@ -221,13 +263,12 @@ class SearchPanel extends Component {
   handleRemoveAll = () => {
     this.setState({
       toDownload: []
+    }, () => {
+      this.fakeReload()
     })
   }
- 
-  handleChangePage = (currentPage) => {
-    console.log("changeCurrentPage: ", currentPage)
-    const { pageSize } = this.state
 
+  handleChangePage = (currentPage) => {
     this.loadExposures(currentPage);
   }
 
@@ -237,18 +278,18 @@ class SearchPanel extends Component {
       <Card>
         <CardHeader subheader={`Results: ${exposureCount}`} />
         <CardContent>
-          <ResultGrid 
-            rows={data} 
-            totalCount={exposureCount} 
-            pageSize={pageSize} 
+          <ResultGrid
+            rows={data}
+            totalCount={exposureCount}
+            pageSize={pageSize}
             currentPage={currentPage}
             handleChangePage={this.handleChangePage}
-            onDetail={this.handleDetail} 
-            handleSelection={this.handleSelection} 
-            handleAdd={this.handleAdd} 
-            toDownload={toDownload} 
+            onDetail={this.handleDetail}
+            handleSelection={this.handleSelection}
+            handleAdd={this.handleAdd}
+            toDownload={toDownload}
             loading={loading}
-            />
+          />
         </CardContent>
       </Card>
     )
@@ -270,8 +311,8 @@ class SearchPanel extends Component {
           <Button size="small" color="primary" variant="contained" disabled={!toDownload.length}>
             Download
             <CloudDownloadIcon className={classes.rightIcon} />
-          </Button>          
-      </CardActions>
+          </Button>
+        </CardActions>
       </Card>
     )
   }
@@ -302,13 +343,13 @@ class SearchPanel extends Component {
           <Grid item xs={12} sm={12} lg={6} xl={4} >
             <Card className={classes.card}>
               <CardContent>
-                <SearchForm 
-                  handleSearch={this.handleSearch} 
-                  handleClear={this.handleClear} 
+                <SearchForm
+                  handleSearch={this.handleSearch}
+                  handleClear={this.handleClear}
                   handleChangeTelescope={this.handleChangeTelescope}
                   handleChangeInstrument={this.handleChangeInstrument}
-                  telescopes={telescopes} 
-                  instruments={instruments} 
+                  telescopes={telescopes}
+                  instruments={instruments}
                   bands={bands} />
               </CardContent>
             </Card>
