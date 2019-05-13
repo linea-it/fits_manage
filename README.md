@@ -157,6 +157,25 @@ docker-compose up
 docker exec -it $(docker ps -q -f name=backend) python manage.py createsuperuser
 ```
 Acessar no navegador a url localhost para testar. 
+
 Acessar no navegador a url http://localhost/admin/ para acessar a interface administrativa do Django. 
 
+Para fazer a importação de dados. 
+copiar para o diretório lna/archive/json os arquivos json. 
+copiar para o diretório lna/archive o arquivo csv. 
 
+Importar a lista de imagens. 
+```
+docker exec -it $(docker ps -q -f name=backend) python manage.py import_exposures table.csv
+```
+Importar os headers para cada imagem. 
+```
+docker exec -it $(docker ps -q -f name=backend) python manage.py import_headers json
+```
+OBS: estes comandos podem demorar bastante. 
+
+Duvidas sobre os comando usar 
+```
+docker exec -it $(docker ps -q -f name=backend) python manage.py import_exposures --help
+docker exec -it $(docker ps -q -f name=backend) python manage.py import_headers --help
+```
