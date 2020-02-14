@@ -50,7 +50,9 @@ class SearchPanel extends Component {
       instrument: "",
       band: "",
       exposureTime: 0,
-      observer: ""
+      observer: "",
+      ra:0.0,
+      dec:0.0,
     },
     exposureCount: 0,
     selected: {},
@@ -61,18 +63,30 @@ class SearchPanel extends Component {
 
   componentDidMount() {
 
+    
+   
     this.loadData();
+    this.test();
 
+  }
+
+  test = async () =>{
+    
+    var im = await SearchApi.getExposureDeg(340.0, -25.0, 10);
+    console.log("text", im)
   }
 
   loadData = async () => {
 
     const dtelescopes = await SearchApi.getTelescopes();
+    if(dtelescopes != null)
+    {
     const telescopes = dtelescopes.telescopes;
-
+    
     this.setState({
       telescopes: telescopes,
     })
+  }
 
   }
 
@@ -89,8 +103,8 @@ class SearchPanel extends Component {
     const { search, pageSize } = this.state;
 
     const dexposures = await SearchApi.getAllExposures(search, pageSize, currentPage);
-    const exposures = dexposures.exposures.edges.map(edge => edge.node)
-    const exposureCount = await SearchApi.getExposuresCount(search)
+    const exposures = dexposures.exposures.edges.map(edge => edge.node);
+    const exposureCount = await SearchApi.getExposuresCount(search);
 
     this.setState({
       data: exposures,
@@ -98,6 +112,7 @@ class SearchPanel extends Component {
       currentPage: currentPage,
       loading: false,
     });
+
   }
 
   handleChangeTelescope = (telescope) => {

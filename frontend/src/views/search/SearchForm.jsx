@@ -61,6 +61,7 @@ class SearchForm extends Component {
       if (name === 'instrument') {
         this.props.handleChangeInstrument(value)
       }
+      
     });
   };
 

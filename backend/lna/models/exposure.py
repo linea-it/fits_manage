@@ -8,12 +8,14 @@ class Exposure(models.Model):
         help_text='Filename',
     )
 
+    '''
     date = models.DateField(
         verbose_name="Date",
         null=True, 
         blank=True,
         default=None,
     )
+    '''
 
     date_obs = models.DateTimeField(
         verbose_name="Date Observation",
@@ -46,7 +48,7 @@ class Exposure(models.Model):
 
     ra = models.CharField(
         verbose_name='RA',
-        max_length=12,
+        max_length=24,
         null=True, 
         blank=True,
         default=None,
@@ -54,7 +56,7 @@ class Exposure(models.Model):
 
     dec = models.CharField(
         verbose_name='Dec',
-        max_length=12,
+        max_length=24,
         null=True, 
         blank=True,
         default=None,
@@ -62,7 +64,7 @@ class Exposure(models.Model):
 
     band = models.CharField(
         verbose_name='Band',
-        max_length=10,
+        max_length=24,
         null=True, 
         blank=True,
         default=None,
@@ -109,7 +111,7 @@ class Exposure(models.Model):
 
     file_type = models.CharField(
         verbose_name='File Type',
-        max_length=5,
+        max_length=8,
         null=True, 
         blank=True, 
         default=None, 
@@ -126,7 +128,7 @@ class Exposure(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=['filename']),
-            models.Index(fields=['date']),
+            #models.Index(fields=['date']),
             models.Index(fields=['date_obs']),
             models.Index(fields=['target']),
             models.Index(fields=['ra', 'dec']),

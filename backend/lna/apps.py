@@ -1,4 +1,4 @@
-from django.apps import AppConfig
+9+from django.apps import AppConfig
 
 
 class LnaConfig(AppConfig):

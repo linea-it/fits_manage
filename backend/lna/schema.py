@@ -29,6 +29,8 @@ class ExposureNode(DjangoObjectType):
             'band': ['iexact'],
             'exposure_time':['gte'],
             'observer': ['iexact', 'icontains', 'istartswith'],
+            'ra_deg':['gte', 'lte'],
+            'dec_deg':['gte', 'lte'],
         }
 
     have_headers = graphene.Boolean()
