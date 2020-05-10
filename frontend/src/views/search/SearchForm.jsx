@@ -44,6 +44,9 @@ class SearchForm extends Component {
       telescope: 'any',
       instrument: 'any',
       exposureTime: '',
+      ra: '',
+      dec: '',
+      radius: '',
       band: 'any',
       startDate: '',
       endDate: '',
@@ -170,7 +173,7 @@ class SearchForm extends Component {
                 }}
                 disabled={this.state.instrument === 'any' ? true : false}
               >
-                <option value="any">Any</option>
+                <option value='any'>Any</option>
                 {bands.map((e, i) => {
                   return (
                     <option key={i} value={e}>{e}</option>

@@ -1,51 +1,98 @@
 
 import Client from 'api/Client'
 
+
 export default class SearchApi {
-
+  
   static parseExposureFilters ({
-  target,
-  telescope,
-  instrument,
-  band,
-  exposureTime, ra, dec, radius,
-  observer,}) {
+    target,
+    telescope,
+    instrument,
+    band,
+    exposureTime,
+    observer, ra, dec, radius}) {
+      
+      console.log(exposureTime);
+      telescope = telescope === "any" ? '' : telescope;
+      instrument = instrument === "any" ? '' : instrument;
+      band = band === "any" ? '' : band;
+      exposureTime = exposureTime === '' ? 0 : exposureTime;
 
-  telescope = telescope === "any" ? '' : telescope;
-  instrument = instrument === "any" ? '' : instrument;
-  band = band === "any" ? '' : band;
-  exposureTime = exposureTime === '' ? 0 : exposureTime;
+      // console.log(ra);
+      // console.log(dec);
+      // console.log(radius);
+
+      if(ra !== '' && dec !== '' && radius !== ''){
+        
+
+        var raDegGte = parseFloat(ra) - parseFloat(radius);
+        var raDegLte = parseFloat(ra) + parseFloat(radius);
+        var decDegGte = parseFloat(dec) - parseFloat(radius);
+        var decDegLte = parseFloat(dec) + parseFloat(radius);
+
+        // console.log(raDegGte);
+        // console.log(raDegLte);
+        // console.log(decDegGte);
+        // console.log(decDegLte);
+
   
-  var coord;
-  //const strFilter ;
-  if(ra != undefined && dec != undefined && radius != undefined)
+        const strFilter = `target_Icontains: "${target}", telescope_Iexact: "${telescope}", 
+        instrument_Iexact: "${instrument}", band_Iexact: "${band}", observer_Icontains: "${observer}",
+        exposureTime_Gte: ${exposureTime}, raDeg_Gte: ${raDegGte}, raDeg_Lte:${raDegLte}, decDeg_Gte: ${decDegGte},
+        decDeg_Lte: ${decDegLte}`;
+        return strFilter;
+      }
+      else{
+
+        const strFilter = `target_Icontains: "${target}", telescope_Iexact: "${telescope}", 
+        instrument_Iexact: "${instrument}", band_Iexact: "${band}", observer_Icontains: "${observer}",
+        exposureTime_Gte: ${exposureTime}`;
+
+        return strFilter;
+      }
+     
+}
+  
+static calcD(alfa0, delta0, alfa1, delta1, radius){
+
+  var i;
+  var alfa0R = alfa0 * Math.PI/180.0;
+  var delta0R = delta0 * Math.PI/180.0;
+  var alfa1R = alfa1 * Math.PI/180.0;
+  var delta1R = delta1 * Math.PI/180.0;
+  var temp = 0.0;
+  var radiusR = radius * Math.PI/180.0;
+  var ac;
+  var v0 = new Array(0.0, 0.0, 0.0);
+  var v1 = new Array(0.0, 0.0, 0.0);
+
+  v0[0] = Math.cos(alfa0R) * Math.cos(delta0R);
+  v0[1] = Math.sin(alfa0R) * Math.cos(delta0R);
+  v0[2] = Math.sin(delta0R);
+
+
+  v1[0] = Math.cos(alfa1R) * Math.cos(delta1R);
+  v1[1] = Math.sin(alfa1R) * Math.cos(delta1R);
+  v1[2] = Math.sin(delta1R);
+
+  for(i = 0; i < v0.length; i++)
   {
-    coord = `raDeg_Gte: ${ra - radius}, raDeg_Lte: ${ra + radius}, decDeg_Gte: ${dec-radius}, decDeg_Lte:${dec + radius}`;
-  
-  const strFilter = `
-    target_Icontains: "${target}",
-    telescope_Iexact: "${telescope}", 
-    instrument_Iexact: "${instrument}",
-    band_Iexact: "${band}",
-    observer_Icontains: "${observer}",
-    exposureTime_Gte: ${exposureTime},
-    ${coord}
-  `;
-  return strFilter;
+    temp = temp + v0[i] * v1[i];
+  }
+
+  ac = Math.acos(temp);
+
+  console.log("ac = ");
+  console.log(ac*180.0/Math.PI);
+
+  if(ac > radiusR)
+  {
+    return 0;
   }
   else{
-    const strFilter = `
-    target_Icontains: "${target}",
-    telescope_Iexact: "${telescope}", 
-    instrument_Iexact: "${instrument}",
-    band_Iexact: "${band}",
-    observer_Icontains: "${observer}",
-    exposureTime_Gte: ${exposureTime},
-  `;
-  return strFilter;
+    return 1;
   }
-  
-  }
+}
 
   static async getAllExposures({
   target,
@@ -55,7 +102,7 @@ export default class SearchApi {
   exposureTime,
   observer,
   ra,
-  dec
+  dec, radius,
   }, pageSize, currentPage) {
   try {
     var strFilter = this.parseExposureFilters({
@@ -66,7 +113,7 @@ export default class SearchApi {
       exposureTime,
       observer,
       ra,
-      dec
+      dec,radius
     });
     console.log('currentPage', currentPage)
 
@@ -105,8 +152,8 @@ export default class SearchApi {
           totalCount
         } 
       }
-    `);
-
+    `); 
+  
     return exposures;
   } catch (e) {
     return null;
@@ -120,6 +167,9 @@ export default class SearchApi {
   band,
   exposureTime,
   observer,
+  ra,
+  dec,
+  radius,
   }) {
   try {
     var strFilter = this.parseExposureFilters({
@@ -129,6 +179,9 @@ export default class SearchApi {
       band,
       exposureTime,
       observer,
+      ra,
+      dec,
+      radius,
     });
 
     const data = await Client.query(`
@@ -246,30 +299,5 @@ export default class SearchApi {
   }
   }
 
-  static async getExposureDeg(raDeg, decDeg, raio)
-  {
-    try
-    {
-      const exposureByDeg = await Client.query(`
-      {
-        exposures(raDeg_Gte: ${raDeg - raio}, raDeg_Lte: ${raDeg + raio}, decDeg_Gte: ${decDeg-raio}, decDeg_Lte:${decDeg + raio}) {
-          edges{
-            node{
-              id
-              raDeg
-              decDeg
-            }
-          }
-        }
-      }
-      `);
-
-    return exposureByDeg;
-    }
-    catch(e)
-    {
-      return null;
-    }
-  }
 }
 

@@ -19,6 +19,7 @@ import { remove, findIndex } from 'lodash';
 import Button from '@material-ui/core/Button';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 
+
 const styles = theme => ({
   padding: {
     padding: `0 ${theme.spacing.unit * 2}px`,
@@ -51,8 +52,9 @@ class SearchPanel extends Component {
       band: "",
       exposureTime: 0,
       observer: "",
-      ra:0.0,
-      dec:0.0,
+      ra:0,
+      dec:0,
+      radius:0,
     },
     exposureCount: 0,
     selected: {},
@@ -61,6 +63,7 @@ class SearchPanel extends Component {
     loading: false
   }
 
+  
   componentDidMount() {
 
     
@@ -72,7 +75,7 @@ class SearchPanel extends Component {
 
   test = async () =>{
     
-    var im = await SearchApi.getExposureDeg(340.0, -25.0, 10);
+    var im = SearchApi.calcD(279, -31, 270, -25, 20);
     console.log("text", im)
   }
 
@@ -105,9 +108,25 @@ class SearchPanel extends Component {
     const dexposures = await SearchApi.getAllExposures(search, pageSize, currentPage);
     const exposures = dexposures.exposures.edges.map(edge => edge.node);
     const exposureCount = await SearchApi.getExposuresCount(search);
+    var i = 0;
+    var nexposures = new Array();
+    for(i = 0; i < exposures.length; i++)
+    {
+      var im = SearchApi.calcD(parseFloat(search.ra).toFixed(8), parseFloat(search.dec).toFixed(8), 
+                parseFloat(exposures[i].raDeg).toFixed(8), parseFloat(exposures[i].decDeg).toFixed(8), 
+                parseFloat(search.radius)).toFixed(8);
+      if(!im){
+        console.log("fora do raio");
+      }
+      else{
+        console.log("dentro");
+        nexposures.push(exposures[i]);
+      }
+    }
 
+    
     this.setState({
-      data: exposures,
+      data: nexposures,
       exposureCount: exposureCount,
       currentPage: currentPage,
       loading: false,
@@ -158,6 +177,7 @@ class SearchPanel extends Component {
   };
 
   handleSearch = (fields) => {
+    console.log(fields);
     this.setState({
       search: fields,
     }, () => { this.loadExposures() })
@@ -283,6 +303,10 @@ class SearchPanel extends Component {
     })
   }
 
+  handleDownload = () =>{
+    const downloadManager = require("react-native-simple-download-manager");
+    console.log("download");
+  }
   handleChangePage = (currentPage) => {
     this.loadExposures(currentPage);
   }
@@ -323,7 +347,7 @@ class SearchPanel extends Component {
           <Button size="small" color="primary" variant="outlined" onClick={this.handleRemoveAll}>
             Empty List
           </Button>
-          <Button size="small" color="primary" variant="contained" disabled={!toDownload.length}>
+          <Button size="small" color="primary" variant="contained" disabled={!toDownload.length} onClick={this.handleDownload}>
             Download
             <CloudDownloadIcon className={classes.rightIcon} />
           </Button>
