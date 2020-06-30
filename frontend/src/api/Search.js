@@ -135,6 +135,7 @@ static calcD(alfa0, delta0, alfa1, delta1, radius){
               id
               filename
               target
+              filePath
               ra
               dec
               raDeg

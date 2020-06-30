@@ -19,7 +19,6 @@ import { remove, findIndex } from 'lodash';
 import Button from '@material-ui/core/Button';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 
-
 const styles = theme => ({
   padding: {
     padding: `0 ${theme.spacing.unit * 2}px`,
@@ -69,14 +68,7 @@ class SearchPanel extends Component {
     
    
     this.loadData();
-    this.test();
 
-  }
-
-  test = async () =>{
-    
-    var im = SearchApi.calcD(279, -31, 270, -25, 20);
-    console.log("text", im)
   }
 
   loadData = async () => {
@@ -116,10 +108,10 @@ class SearchPanel extends Component {
                 parseFloat(exposures[i].raDeg).toFixed(8), parseFloat(exposures[i].decDeg).toFixed(8), 
                 parseFloat(search.radius)).toFixed(8);
       if(!im){
-        console.log("fora do raio");
+        //console.log("fora do raio");
       }
       else{
-        console.log("dentro");
+        //console.log("dentro");
         nexposures.push(exposures[i]);
       }
     }
@@ -302,10 +294,30 @@ class SearchPanel extends Component {
       this.fakeReload()
     })
   }
+  
+  logArrayElements = (element, index, array) => {
+   
 
+    fetch(`http://localhost/data/${element.filename}`)
+        .then(response => {
+          response.blob().then(blob => {
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = element.filename;
+            a.click();
+        
+            console.log(response.url);
+          });
+          window.open(response.url);
+      });
+  }
   handleDownload = () =>{
-    const downloadManager = require("react-native-simple-download-manager");
-    console.log("download");
+   
+    const { toDownload } = this.state;
+   
+    toDownload.forEach(this.logArrayElements);
+    
   }
   handleChangePage = (currentPage) => {
     this.loadExposures(currentPage);

@@ -83,7 +83,7 @@ class SearchForm extends Component {
       <form className={classes.container} noValidate autoComplete="off">
         <Grid container spacing={16}>
           <Grid item xs={6} sm={6} md={6} lg={6} >
-            <TextField
+            {/* <TextField
               name="piName"
               label="PI Name"
               value={this.state.piName}
@@ -92,7 +92,7 @@ class SearchForm extends Component {
               fullWidth
               margin="normal"
               disabled
-            />
+            /> */}
             <TextField
               name="observer"
               label="Observer"
@@ -116,11 +116,14 @@ class SearchForm extends Component {
                   fullWidth
                   margin="normal"
                 />
-                <Button color="primary" variant="contained" className={classes.buttonUpload} disabled>
+                
+                {/* <Button color="primary" variant="contained" className={classes.buttonUpload} disabled>
                   Upload Target List
-                </Button>
+                </Button> */}
               </CardContent>
             </Card>
+            <Card className={classes.card} elevation={2}>
+              <CardContent>
             <FormControl className={classes.textField} margin="normal" fullWidth>
               <InputLabel htmlFor="telescope">Telescope</InputLabel>
               <Select
@@ -192,6 +195,8 @@ class SearchForm extends Component {
               margin="normal"
               helperText="time in seconds, greater than or equal to."
             />
+            </CardContent>
+            </Card>
           </Grid>
           <Grid item xs={6} sm={6} md={4} lg={6} xl={6} >
             <Card className={classes.card} elevation={2}>

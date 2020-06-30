@@ -11,6 +11,7 @@ import SearchApi from 'api/Search'
 import HeaderGrid from './HeaderGrid';
 import { IconButton } from '@material-ui/core';
 
+
 const styles = theme => ({
   closeButton: {
     position: 'absolute',
