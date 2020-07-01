@@ -39,7 +39,7 @@ services:
       - 80:8080
     volumes:
       #./development.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./imagens:/var/www/data
+      - ./imagens:/var/www/data'
       - ./frontend/nginx-proxy-develop.conf:/nginx/conf.d/default.conf
       - ./frontend:/nginx/conf.d/default.conf
     cap_drop:
